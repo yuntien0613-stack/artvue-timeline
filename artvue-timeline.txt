@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>藝觀 ARTVUE | 亞洲與世界藝術史對照年表</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;900&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0f0e0c; --ink60:rgba(15,14,12,.6); --ink20:rgba(15,14,12,.12);
+  --rice:#f8f4ec; --rice90:rgba(248,244,236,.94);
+  --gold:#b8892a; --gold-lt:#e4c97a;
+  --cn:#8b2020; --jp:#2e6b4a; --wl:#2a3d6b;
+  --sans:'Noto Sans TC',sans-serif; --serif:'Noto Serif TC',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0; -webkit-tap-highlight-color: transparent;}
+html{scroll-behavior:smooth}
+body{background:var(--rice);color:var(--ink);font-family:var(--sans);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 10% 20%,rgba(184,137,42,.05) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 70% at 88% 80%,rgba(42,61,107,.04) 0%,transparent 55%);
+  pointer-events:none;z-index:0}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:var(--rice90);backdrop-filter:blur(10px);
+  border-bottom:.5px solid var(--ink20);padding:8px 16px;display:flex;align-items:center;min-height:60px; flex-wrap:wrap; gap:10px;}
+.nav-logo{font-family:var(--serif);font-weight:900;font-size:20px;color:var(--gold);letter-spacing:.05em;}
+.nav-name{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink);margin-right:auto;}
+
+.lang-grp{display:flex;}
+.lb{padding:6px 12px;font-size:11px;border:.5px solid var(--ink20);background:transparent;
+  color:var(--ink60);cursor:pointer;font-family:var(--sans);transition:all .12s;}
+.lb:first-child{border-radius:4px 0 0 4px}
+.lb:last-child{border-radius:0 4px 4px 0}
+.lb.on{background:var(--ink);color:var(--rice);border-color:var(--ink)}
+
+.civ-grp{display:flex;gap:6px;}
+.cb{padding:6px 10px;font-size:11px;border-radius:4px;border:.5px solid;background:transparent;
+  cursor:pointer;transition:all .14s;letter-spacing:.03em;font-family:var(--sans)}
+.cb[data-c="jp"]{color:var(--jp);border-color:var(--jp)}
+.cb[data-c="wl"]{color:var(--wl);border-color:var(--wl)}
+.cb.on[data-c="jp"]{background:var(--jp);color:#fff}
+.cb.on[data-c="wl"]{background:var(--wl);color:#fff}
+
+/* HERO */
+.hero{position:relative;z-index:1;padding:36px 20px 24px;border-bottom:.5px solid var(--ink20);text-align:center}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:24px;letter-spacing:.12em;color:var(--ink); line-height:1.4}
+.hero p{font-size:13px;color:var(--ink60);letter-spacing:.06em;margin-top:8px; line-height:1.6}
+.gold-rule{width:40px;height:2px;background:var(--gold);margin:16px auto 0}
+
+/* SCRUBBER */
+.scrub-wrap{position:sticky;top:60px;z-index:90;background:var(--rice90);
+  backdrop-filter:blur(10px);border-bottom:.5px solid var(--ink20);padding:12px 20px 10px}
+.scrub-ticks{display:flex;justify-content:space-between;font-size:9px;color:var(--ink60);margin-bottom:6px;font-family:var(--sans);}
+input[type=range].scrub{-webkit-appearance:none;appearance:none;width:100%;height:3px;
+  background:linear-gradient(to right,var(--gold),var(--ink) 72%);outline:none;cursor:pointer;border-radius:2px}
+input[type=range].scrub::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;background:var(--gold);border:2px solid var(--rice);box-shadow:0 0 0 1px var(--ink);cursor:grab}
+.scrub-yr{text-align:center;font-family:var(--serif);font-size:13px;color:var(--gold);font-weight:600;margin-top:8px;letter-spacing:.1em}
+
+/* MAIN CONTAINER */
+.main{position:relative;z-index:1;padding:24px 16px 80px;max-width:860px;margin:0 auto; display:flex; flex-direction:column; gap:16px;}
+
+/* DYNASTY CARD */
+.dc{border:.5px solid rgba(139,32,32,.25);padding:16px;border-radius:8px;cursor:pointer;
+  background:rgba(255,255,255,.5);transition:all .2s ease;position:relative;overflow:hidden}
+.dc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cn);transition:width .2s}
+.dc:hover{box-shadow:0 4px 16px rgba(0,0,0,.04); background:rgba(255,255,255,.9);}
+.dc.exp{box-shadow:0 8px 30px rgba(0,0,0,.08); background:#fff; border-color:var(--cn); cursor:default;}
+.dc.exp::before{width:5px;}
+
+.dc-head{display:flex; justify-content:space-between; align-items:flex-start;}
+.dc-name{font-family:var(--serif);font-size:20px;font-weight:900;color:var(--cn);letter-spacing:.05em;}
+.dc-yrs{font-size:12px;color:var(--ink60);margin-top:4px;font-family:var(--sans)}
+.dc-tag{display:inline-block;font-size:11px;padding:3px 10px;border-radius:4px;
+  border:.5px solid rgba(139,32,32,.3);background:rgba(139,32,32,.04);color:var(--cn);letter-spacing:.05em;}
+
+/* DETAIL CONTENT */
+.detail{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(0.4, 0, 0.2, 1), opacity .3s; opacity:0;}
+.dc.exp .detail{max-height:3500px; opacity:1; padding-top:16px;}
+.d-rule{height:1px;background:var(--ink20);margin:16px 0;}
+.d-desc{font-size:15px;line-height:1.75;color:var(--ink);margin-bottom:20px; text-align:justify;}
+
+/* SUB SECTIONS (Responsive Grid) */
+.info-grid {display:grid; grid-template-columns: 1fr; gap:12px; margin-bottom:20px;}
+.info-box {background:rgba(15,14,12,.02); border:.5px solid var(--ink20); padding:12px 16px; border-radius:6px;}
+.info-box h4 {font-size:12px; color:var(--ink60); margin-bottom:8px; letter-spacing:.1em; font-weight:600;}
+.info-box p {font-size:14px; color:var(--ink); line-height:1.6;}
+
+/* PARALLEL HISTORY (Responsive Flex) */
+.parallel-wrap {display:flex; flex-direction:column; gap:12px; margin-bottom:20px;}
+.p-box {padding:16px; border-radius:6px; border-left:4px solid;}
+.p-jp {background:rgba(46,107,74,.04); border-color:var(--jp); border-right:.5px solid rgba(46,107,74,.2); border-top:.5px solid rgba(46,107,74,.2); border-bottom:.5px solid rgba(46,107,74,.2);}
+.p-wl {background:rgba(42,61,107,.04); border-color:var(--wl); border-right:.5px solid rgba(42,61,107,.2); border-top:.5px solid rgba(42,61,107,.2); border-bottom:.5px solid rgba(42,61,107,.2);}
+.p-head {font-size:14px; font-weight:900; margin-bottom:8px; display:flex; align-items:center; gap:6px; font-family:var(--serif);}
+.p-jp .p-head {color:var(--jp);}
+.p-wl .p-head {color:var(--wl);}
+.p-text {font-size:14px; line-height:1.75; color:var(--ink); text-align:justify;}
+
+/* ARTWORK GALLERY (Responsive Scroll) */
+.art-sec-title {font-size:13px; font-weight:600; color:var(--ink); margin-bottom:10px; letter-spacing:.05em;}
+.art-scroll {display:flex; overflow-x:auto; gap:16px; padding-bottom:12px; scroll-snap-type: x mandatory;}
+.art-scroll::-webkit-scrollbar {height: 6px;}
+.art-scroll::-webkit-scrollbar-thumb {background: var(--ink20); border-radius: 3px;}
+.art-card {flex:0 0 160px; scroll-snap-align: start; border:.5px solid var(--ink20); border-radius:6px; overflow:hidden; background:#fff; cursor:pointer;}
+.art-img-wrap {width:100%; aspect-ratio:4/3; background:#e0dcd2; overflow:hidden;}
+.art-img-wrap img {width:100%; height:100%; object-fit:cover; transition:transform .3s;}
+.art-card:hover .art-img-wrap img {transform:scale(1.05);}
+.art-card-info {padding:10px;}
+.art-card-title {font-family:var(--serif); font-size:13px; font-weight:600; color:var(--ink); margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.art-card-sub {font-size:11px; color:var(--ink60);}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(15,14,12,.85);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center; padding:20px;}
+.modal-bg.show{display:flex; animation:fadeIn .2s ease;}
+.modal{background:var(--rice);border-radius:8px; max-width:540px; width:100%; position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,.4); overflow:hidden;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.mc{position:absolute;top:12px;right:12px;width:32px;height:32px; border-radius:50%; background:rgba(0,0,0,.6); color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;border:none;z-index:10;}
+.m-img{width:100%; max-height:45vh; object-fit:contain; background:#111; display:block;}
+.m-body {padding:24px;}
+.m-title{font-family:var(--serif);font-size:22px;font-weight:900;color:var(--ink);margin-bottom:6px}
+.m-where{font-size:13px;font-weight:600;color:var(--gold);margin-bottom:12px;letter-spacing:.05em;}
+.m-desc{font-size:15px;line-height:1.75;color:var(--ink); text-align:justify;}
+
+/* =========================================
+   TABLET & DESKTOP (RWD 響應式優化)
+   ========================================= */
+@media (min-width: 768px) {
+  .nav { padding: 0 24px; gap: 20px; }
+  .hero h1 { font-size: 32px; }
+  .hero p { font-size: 15px; }
+  .dc { padding: 24px; }
+  .dc-name { font-size: 24px; }
+  .dc-yrs { font-size: 14px; }
+  
+  /* 平板以上，君王與事件改為雙欄並排 */
+  .info-grid { grid-template-columns: 1fr 1fr; }
+  
+  /* 平板以上，日本與世界對照改為雙欄並排 */
+  .parallel-wrap { flex-direction: row; }
+  .p-box { flex: 1; }
+  
+  /* 平板以上，藝術品卡片稍微放大 */
+  .art-card { flex: 0 0 200px; }
+  .art-card-title { font-size: 14px; }
+  
+  /* 彈出視窗放大 */
+  .modal { max-width: 600px; }
+  .m-img { max-height: 55vh; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">藝觀</div>
+  <div class="nav-name">ARTVUE</div>
+  
+  <div class="lang-grp">
+    <button class="lb on" onclick="setLang('zh')">中</button>
+    <button class="lb" onclick="setLang('en')">EN</button>
+    <button class="lb" onclick="setLang('ja')">日</button>
+  </div>
+
+  <div class="civ-grp" style="margin-left:auto;">
+    <button class="cb on" data-c="jp" onclick="toggleCiv('jp')">🇯🇵 日本</button>
+    <button class="cb on" data-c="wl" onclick="toggleCiv('wl')">🌍 世界</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1 id="htitle">中國藝術史・跨國對照年表</h1>
+  <p id="hsub">點擊朝代卡片，探索君王、傳世藝術與同期世界史實</p>
+  <div class="gold-rule"></div>
+</div>
+
+<div class="scrub-wrap">
+  <div class="scrub-ticks">
+    <span>2100 BC</span><span>1000 BC</span><span>0</span><span>1000</span><span>1912</span>
+  </div>
+  <input type="range" class="scrub" id="sl" min="-2100" max="1912" value="-2100" step="10">
+  <div class="scrub-yr" id="syr">2100 BC ← 拖曳時間軸</div>
+</div>
+
+<div class="main" id="mc"></div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <button class="mc" onclick="closeM()">✕</button>
+    <img src="" alt="" class="m-img" id="mimg">
+    <div class="m-body">
+      <div class="m-title" id="mtitle"></div>
+      <div class="m-where" id="mwhere"></div>
+      <div class="m-desc" id="mdesc"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const UI = {
+  zh: {
+    htitle: '中國藝術史・跨國對照年表', hsub: '點擊朝代卡片，探索君王、傳世藝術與同期世界史實', drag: '← 拖曳時間軸',
+    emp: '👑 主要君王與人物', event: '📜 重要歷史事件', art: '🏛️ 代表文物與藝術品 (點擊看大圖)', empty: '請將時間軸向左拉動以探索歷史。'
+  },
+  en: {
+    htitle: 'Chinese Art History Timeline', hsub: 'Click dynasty cards to explore emperors, art, and global history.', drag: '← Drag Timeline',
+    emp: '👑 Key Figures', event: '📜 Major Events', art: '🏛️ Representative Artworks (Tap to expand)', empty: 'Drag the timeline to the left to explore history.'
+  },
+  ja: {
+    htitle: '中国芸術史・対照年表', hsub: '王朝をタップして、君主、芸術作品、同時代のアジア・世界史を探索', drag: '← タイムラインをスライド',
+    emp: '👑 主要な君主と人物', event: '📜 重要な歴史的事件', art: '🏛️ 代表的な芸術作品 (タップで拡大)', empty: 'タイムラインを左にスライドして歴史を探索してください。'
+  }
+};
+
+const DATA = [
+  {
+    id: 'shang-zhou', s: -2100, e: -221,
+    zh: {
+      name: '夏・商・周', yrs: 'c.2100–221 BC', tag: '青銅器・諸子百家',
+      desc: '中國文明的奠基期。商朝確立了祭祀為核心的國家形態，青銅器鑄造技術達到頂峰。東周（春秋戰國）迎來了「百家爭鳴」的思想黃金時代，儒、道、法等學說奠定了東亞兩千年的文化底蘊。',
+      emps: '大禹、商湯、周武王、齊桓公、孔子、老子',
+      events: '甲骨文出現、武王伐紂、春秋五霸與戰國七雄爭霸、商鞅變法。',
+      jp: '【繩文至彌生時代初期】處於新石器時代，以狩獵、採集為主，製作帶有繩紋圖案的獨特陶器。至西元前3世紀，亞洲大陸傳入水稻種植與金屬器，日本逐漸過渡到農耕社會。',
+      wl: '【軸心時代與古文明】古埃及建諸多神廟；美索不達米亞出現《漢摩拉比法典》。隨後進入全球「軸心時代」：古希臘城邦發展（雅典、斯巴達）、羅馬建城；釋迦牟尼於印度創立佛教。'
+    },
+    en: {
+      name: 'Xia, Shang, Zhou', yrs: 'c.2100–221 BC', tag: 'Bronze Age & Philosophers',
+      desc: 'The foundation of Chinese civilization. The Shang dynasty perfected bronze casting and oracle bone script. The Eastern Zhou saw the "Hundred Schools of Thought," where Confucianism and Daoism laid East Asia\'s intellectual groundwork.',
+      emps: 'Yu the Great, King Wu of Zhou, Confucius, Laozi',
+      events: 'Invention of Oracle Bone Script, Warring States period, Shang Yang\'s reforms.',
+      jp: '[Jomon to Early Yayoi] Hunter-gatherer society known for cord-marked pottery. Around 300 BC, rice cultivation and metallurgy arrived from the continent, shifting Japan to an agricultural society.',
+      wl: '[Axial Age] Egypt built grand temples; Babylon issued Hammurabi\'s Code. Later, the global "Axial Age" began: Greek city-states flourished, Rome was founded, and Buddha established Buddhism in India.'
+    },
+    ja: {
+      name: '夏・殷・周', yrs: 'c.2100–221 BC', tag: '青銅器と諸子百家',
+      desc: '中国文明の基礎が築かれた時代。殷（商）は祭祀を中心とした国家を形成し、青銅器鋳造が頂点に達した。東周（春秋戦国）は「百家争鳴」の時代であり、儒教や道教が東アジア思想の礎となった。',
+      emps: '禹、湯王、武王、孔子、老子',
+      events: '甲骨文字の出現、武王克殷、春秋五覇と戦国七雄の争い。',
+      jp: '【縄文～弥生時代初期】狩猟・採集を中心とし、縄文土器を製作。紀元前3世紀頃から大陸より稲作と金属器が伝来し、農耕社会（弥生時代）へと移行し始めた。',
+      wl: '【枢軸時代と古代文明】エジプトで神殿が建設され、メソポタミアでハンムラビ法典が誕生。その後、ギリシャのポリス（アテネ等）が発展し、ローマが建国され、インドで仏教が起こる「枢軸時代」を迎えた。'
+    },
+    art: [
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Houmuwu_ding.jpg',
+        zh: { name: '后母戊鼎', where: '中國國家博物館', desc: '商代晚期青銅方鼎，重達832公斤，是迄今出土最大、最重的古代青銅禮器。' },
+        en: { name: 'Houmuwu Ding', where: 'National Museum of China', desc: 'Late Shang bronze ding, weighing 832kg—the largest ancient bronze ritual vessel ever excavated.' },
+        ja: { name: '后母戊鼎', where: '中国国家博物館', desc: '殷（商）代後期の青銅器。重さ832kgに達する、これまで出土した中で最大かつ最重の古代青銅礼器。' }
+      },
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/c/ce/Bianzhong_of_Marquis_Yi_of_Zeng.jpg',
+        zh: { name: '曾侯乙編鐘', where: '湖北省博物館', desc: '戰國早期大型青銅樂器。音域跨越五個半八度，被譽為世界音樂史上的奇蹟。' },
+        en: { name: 'Marquis Yi Bells', where: 'Hubei Provincial Museum', desc: 'Early Warring States bronze bells. Spanning 5.5 octaves, it is a miracle of ancient musical history.' },
+        ja: { name: '曾侯乙編鐘', where: '湖北省博物館', desc: '戦国時代初期の大型青銅楽器。5オクターブ半の音域を持ち、古代音楽史の奇跡と称される。' }
+      }
+    ]
+  },
+  {
+    id: 'qin-han', s: -221, e: 220,
+    zh: {
+      name: '秦・漢', yrs: '221 BC–220 AD', tag: '大一統・絲路建立',
+      desc: '秦始皇完成了中國首次大一統，建立帝制。漢朝在制度與文化上將其鞏固，「漢人」之名由此而來。漢武帝打通絲路，中西方首次進行大規模文化交流。漢代藝術展現了豐富的敘事性與宏大的宇宙觀。',
+      emps: '秦始皇、漢高祖劉邦、漢武帝劉徹',
+      events: '修築萬里長城、統一度量衡與文字、張騫通西域、蔡倫改進造紙術。',
+      jp: '【彌生時代中後期】出現早期國家型態。西元57年，漢光武帝賜予日本使節「漢委奴國王」金印，確立了中日早期的朝貢與外交關係。',
+      wl: '【羅馬帝國擴張】羅馬共和國在經歷布匿戰爭後，由奧古斯都轉型為羅馬帝國，迎來「羅馬和平」(Pax Romana)；同時期耶穌誕生，基督教開始傳播。羅馬與漢朝成為當時歐亞大陸的兩大超級強權。'
+    },
+    en: {
+      name: 'Qin & Han', yrs: '221 BC–220 AD', tag: 'Unification & Silk Road',
+      desc: 'Qin Shi Huang unified China and established the imperial system. The Han dynasty consolidated this culture, opening the Silk Road for unprecedented East-West trade. Han art displays profound narrative and cosmological depth.',
+      emps: 'Qin Shi Huang, Emperor Gaozu, Emperor Wu of Han',
+      events: 'Building of the Great Wall, standardization of writing/measurements, Zhang Qian\'s diplomacy, invention of paper.',
+      jp: '[Mid-Late Yayoi] Early state formations emerged. In 57 AD, Emperor Guangwu of Han bestowed the "King of Na gold seal" to a Japanese envoy, marking early formal diplomatic relations.',
+      wl: '[Roman Empire] The Roman Republic transitioned into the Roman Empire under Augustus, entering the Pax Romana. Christianity emerged. Rome and Han China stood as the two superpowers of Eurasia.'
+    },
+    ja: {
+      name: '秦・漢', yrs: '221 BC–220 AD', tag: '天下統一とシルクロード',
+      desc: '秦の始皇帝が中国を統一し、帝制を確立。漢はそれを制度・文化的に強固にし、武帝はシルクロードを開拓して東西交流を本格化させた。漢代の芸術は壮大な宇宙観を描き出している。',
+      emps: '始皇帝、劉邦、漢武帝',
+      events: '万里の長城修築、文字・度量衡の統一、張騫の西域派遣、製紙法の改良。',
+      jp: '【弥生時代中・後期】初期の国家が形成される。紀元57年、後漢の光武帝が日本の使者に「漢委奴国王」の金印を授け、初期の朝貢関係が結ばれた。',
+      wl: '【ローマ帝国の拡大】アウグストゥスによりローマ帝国が成立し「パクス・ロマーナ」を迎える。キリスト教が誕生し、ローマと漢はユーラシア大陸の二大超大国となった。'
+    },
+    art: [
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Terracotta_Army%2C_View_of_Pit_1.jpg',
+        zh: { name: '秦始皇兵馬俑', where: '秦始皇帝陵博物院', desc: '約八千件真人大小的陶製士兵與戰馬，陣容龐大，每個陶俑面部特徵皆不同，為世界第八大奇蹟。' },
+        en: { name: 'Terracotta Army', where: 'Mausoleum of the First Qin Emperor', desc: 'Around 8,000 life-sized terracotta soldiers and horses with unique facial features; the 8th Wonder of the World.' },
+        ja: { name: '兵馬俑', where: '秦始皇帝陵博物院', desc: '約8千体の等身大の兵士と馬の陶俑。すべて顔立ちが異なり「世界第八の不思議」と呼ばれる。' }
+      }
+    ]
+  },
+  {
+    id: 'tang', s: 618, e: 907,
+    zh: {
+      name: '唐', yrs: '618–907 AD', tag: '盛世長安・詩歌黃金期',
+      desc: '中國歷史上最開放的黃金時代。首都長安是當時世界上最大的國際都會。藝術領域百花齊放，書法、人物畫均有突破，唐詩更達到了文學史上的最高峰。',
+      emps: '唐太宗李世民、武則天、唐玄宗李隆基',
+      events: '貞觀之治、玄奘西行取經、開元盛世、安史之亂。',
+      jp: '【飛鳥至平安初期】日本積極推進「大化革新」，全面學習唐朝的律令制度與佛教文化；頻繁派遣「遣唐使」；《萬葉集》成書。',
+      wl: '【阿拉伯帝國崛起】伊斯蘭教由穆罕默德創立並擴張，形成橫跨歐亞非的阿拉伯帝國。歐洲則處於中世紀前期（查理曼帝國建立）。'
+    },
+    en: {
+      name: 'Tang', yrs: '618–907 AD', tag: 'Cosmopolitan Golden Age',
+      desc: 'China\'s most open and confident era. The capital, Chang\'an, was the world\'s largest cosmopolitan city. Poetry reached its absolute pinnacle, alongside breakthroughs in calligraphy and painting.',
+      emps: 'Emperor Taizong, Empress Wu Zetian, Emperor Xuanzong',
+      events: 'Zhenguan Reign, Xuanzang\'s journey to India, An Lushan Rebellion.',
+      jp: '[Asuka to Early Heian] Japan enacted the Taika Reforms, comprehensively adopting Tang systems and Buddhism. Envoys to Tang were frequently sent.',
+      wl: '[Islamic Golden Age] Islam expanded rapidly, forming the Arab Empire. Europe was in the Early Middle Ages (Carolingian Empire).'
+    },
+    ja: {
+      name: '唐', yrs: '618–907 AD', tag: '国際都市長安と詩の黄金期',
+      desc: '中国史上最も開放的な黄金時代。首都長安は世界最大の国際都市だった。書道や人物画が革新され、「唐詩」は文学の最高峰に達した。',
+      emps: '太宗（李世民）、武則天、玄宗',
+      events: '貞観の治、玄奘三蔵のインド求法、安史の乱。',
+      jp: '【飛鳥～平安時代初期】大化の改新により唐の律令制を導入。遣唐使を頻繁に派遣し唐文化を吸収した。『万葉集』が編纂された。',
+      wl: '【イスラム帝国の台頭】イスラム教が誕生し、拡大して大帝国を築いた。ヨーロッパは中世前期（フランク王国カール大帝）。'
+    },
+    art: [
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Tang_dynasty_sancai_horse_-_2.jpg',
+        zh: { name: '唐三彩馬', where: '中國國家博物館', desc: '唐代著名的低溫鉛釉陶器，以黃、綠、白三色為主。造型雄健，反映對西域文化的吸收。' },
+        en: { name: 'Tang Sancai Horse', where: 'National Museum of China', desc: 'Tri-color glazed pottery. The robust horse design reflects Tang\'s absorption of Central Asian aesthetics.' },
+        ja: { name: '唐三彩馬', where: '中国国家博物館', desc: '黄・緑・白の三色釉が特徴の陶器。力強い馬の造形は、西域文化の影響を受けている。' }
+      }
+    ]
+  },
+  {
+    id: 'song', s: 960, e: 1279,
+    zh: {
+      name: '宋', yrs: '960–1279 AD', tag: '文人畫・宋瓷極致',
+      desc: '宋代是中國經濟與文化藝術最精緻的時代。文人階層崛起，確立了「山水畫」的哲學意境；五大名窯的瓷器追求極簡與冰清玉潔的美學，至今難以超越。',
+      emps: '宋太祖趙匡胤、宋徽宗趙佶、宋高宗',
+      events: '王安石變法、靖康之難、活字印刷術與指南針普及。',
+      jp: '【平安中後期至鎌倉】日本國風文化繁榮，紫式部寫下《源氏物語》。12世紀末發生源平合戰，隨後建立鎌倉幕府，武士階級掌權。',
+      wl: '【十字軍東征與大學興起】歐洲教皇發動多次十字軍東征，促進了東西方貿易；博洛尼亞大學、巴黎大學、牛津大學等在此時期建立。'
+    },
+    en: {
+      name: 'Song', yrs: '960–1279 AD', tag: 'Literati Art & Porcelain',
+      desc: 'An era of exquisite economic and cultural refinement. The rise of the literati class established landscape painting as a philosophical medium. Song porcelain pursued minimalist aesthetics that remain unsurpassed.',
+      emps: 'Emperor Taizu, Emperor Huizong, Emperor Gaozong',
+      events: 'Wang Anshi\'s reforms, Jingkang Incident, popularization of compass and movable type printing.',
+      jp: '[Late Heian to Kamakura] Kokufu (national) culture thrived; "The Tale of Genji" was written. The late 12th century saw the Genpei War and the rise of the Samurai class.',
+      wl: '[Crusades & Universities] The Crusades fostered East-West trade. The first European universities (Bologna, Paris, Oxford) were established.'
+    },
+    ja: {
+      name: '宋', yrs: '960–1279 AD', tag: '文人画と極致の宋磁器',
+      desc: '経済・文化が最も洗練された時代。士大夫階級が台頭し、山水画の哲学的境地を確立。五大名窯の磁器は極限のシンプルさを追求し、今なお最高峰とされる。',
+      emps: '太祖（趙匡胤）、徽宗、高宗',
+      events: '王安石の変法、靖康の変、活版印刷と羅針盤の普及。',
+      jp: '【平安時代中後期～鎌倉時代】国風文化が栄え、紫式部が『源氏物語』を執筆。源平合戦を経て鎌倉幕府が成立し、武士階級が実権を握った。',
+      wl: '【十字軍と大学の誕生】十字軍の遠征が行われ、東西交流が活発化。ボローニャ、パリ、オックスフォードなど、ヨーロッパ最古の大学が設立された。'
+    },
+    art: [
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/5/5d/Alongtheriver_QingMing.jpg',
+        zh: { name: '清明上河圖', where: '故宮博物院 (北京)', desc: '北宋張擇端所繪的風俗巨作，生動描繪了首都汴京清明時節的繁華街景。' },
+        en: { name: 'Along the River During Qingming', where: 'Palace Museum (Beijing)', desc: 'A masterpiece capturing the daily life and bustling economy of the Northern Song capital.' },
+        ja: { name: '清明上河図', where: '故宮博物院 (北京)', desc: '北宋の都・汴京（開封）の清明節の賑わいを緻密に描いた風俗画の傑作。' }
+      },
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Ru_ware_bowl%2C_National_Palace_Museum.jpg',
+        zh: { name: '汝窯天青釉無紋水仙盆', where: '國立故宮博物院 (台北)', desc: '宋代五大名窯之首，其「天青色」被形容為「雨過天青雲破處」，極具內斂之美。' },
+        en: { name: 'Ru Ware Narcissus Basin', where: 'National Palace Museum (Taipei)', desc: 'The pinnacle of Song ceramics. Its "sky blue" glaze is described as "the blue sky after rain."' },
+        ja: { name: '汝窯天青釉無紋水仙盆', where: '国立故宮博物院 (台北)', desc: '宋代五大名窯の筆頭。その「天青色」は「雨上がりの雲の切れ間の青空」と形容される。' }
+      }
+    ]
+  },
+  {
+    id: 'yuan-ming', s: 1271, e: 1644,
+    zh: {
+      name: '元・明', yrs: '1271–1644 AD', tag: '青花瓷・鄭和下西洋',
+      desc: '元代引入中東鈷料誕生了「青花瓷」，徹底改變世界陶瓷史。明朝恢復漢族傳統，鄭和下西洋展示強大航海實力，同時建成世界最大的宮殿群——紫禁城。',
+      emps: '元世祖忽必烈、明太祖朱元璋、明成祖朱棣',
+      events: '馬可波羅來華、鄭和七下西洋、修築明長城、土木堡之變。',
+      jp: '【室町至安土桃山時代】日本水墨畫（雪舟）達到巔峰；千利休確立了「侘寂」茶道美學。經歷動盪的戰國時代後，由織田信長與豐臣秀吉推動統一。',
+      wl: '【文藝復興與大航海時代】歐洲爆發文藝復興（達文西、米開朗基羅）。哥倫布發現美洲、麥哲倫環球航行，開啟了全球化與殖民擴張的時代。'
+    },
+    en: {
+      name: 'Yuan & Ming', yrs: '1271–1644 AD', tag: 'Blue-White Porcelain',
+      desc: 'The Mongol Yuan dynasty birthed global "Blue and White" porcelain. The Ming rebuilt Han traditions, completed the Forbidden City, and launched Zheng He\'s maritime voyages.',
+      emps: 'Kublai Khan, Zhu Yuanzhang, Yongle Emperor',
+      events: 'Marco Polo\'s travels, Zheng He\'s voyages, construction of the Great Wall.',
+      jp: '[Muromachi to Azuchi-Momoyama] Ink painting (Sesshu) peaked; Sen no Rikyu defined the tea ceremony (Wabi-sabi). Japan endured the Sengoku period before unification.',
+      wl: '[Renaissance & Age of Discovery] The Italian Renaissance flourished. Columbus reached the Americas, kicking off global colonization.'
+    },
+    ja: {
+      name: '元・明', yrs: '1271–1644 AD', tag: '青花磁器と紫禁城',
+      desc: '元代に中東のコバルト顔料が導入され「青花磁器」が誕生。明代は鄭和の大航海で威信を示し、世界最大の宮殿である紫禁城を建設した。',
+      emps: 'フビライ・ハン、朱元璋、永楽帝',
+      events: 'マルコ・ポーロの来訪、鄭和の南海遠征、明代長城の建設。',
+      jp: '【室町～安土桃山時代】雪舟らにより水墨画が頂点に達し、千利休が「侘び寂び」を大成。戦国時代の動乱を経て天下統一が進んだ。',
+      wl: '【ルネサンスと大航海時代】イタリアでルネサンスが開花。コロンブスのアメリカ到達など、ヨーロッパ諸国によるグローバル化が始まった。'
+    },
+    art: [
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/7/7d/Ming_dynasty_blue_and_white_vase.jpg',
+        zh: { name: '青花瓷梅瓶', where: '世界各大博物館', desc: '以潔白瓷胎與鮮豔藍色紋飾對比著稱，成為中國瓷器外銷主力。' },
+        en: { name: 'Blue and White Meiping', where: 'Various Museums', desc: 'The striking contrast of cobalt blue on white porcelain became a global sensation.' },
+        ja: { name: '青花磁器 梅瓶', where: '世界各地の博物館', desc: '白磁に鮮やかなコバルトブルーで文様を描き、世界の美意識に影響を与えた。' }
+      }
+    ]
+  },
+  {
+    id: 'qing', s: 1644, e: 1912,
+    zh: {
+      name: '清', yrs: '1644–1912 AD', tag: '繁縟工藝・東西交融',
+      desc: '中國最後一個封建王朝。康雍乾時期國力鼎盛，宮廷藝術追求極致繁縟（如粉彩）。西方傳教士帶來了透視法，中西融合的宮廷畫風（如郎世寧）成為獨特風景。',
+      emps: '康熙帝、雍正帝、乾隆帝、慈禧太后',
+      events: '康雍乾盛世、編纂《四庫全書》、鴉片戰爭、辛亥革命。',
+      jp: '【江戶時代至明治維新】德川幕府實行鎖國，發展出「浮世繪」大眾文化。1868年開啟「明治維新」，迅速全盤西化成為現代強國。',
+      wl: '【科學革命與工業革命】牛頓發表萬有引力；英國爆發工業革命；美國獨立與法國大革命帶來民主思潮；西方列強確立全球霸權。'
+    },
+    en: {
+      name: 'Qing', yrs: '1644–1912 AD', tag: 'Elaborate Craft & Fusion',
+      desc: 'China\'s final imperial dynasty. Peak prosperity under Kangxi and Qianlong saw ornate arts. Western missionaries introduced perspective, resulting in a unique East-West hybrid court style.',
+      emps: 'Kangxi, Yongzheng, Qianlong, Empress Dowager Cixi',
+      events: 'High Qing era, Opium Wars, Xinhai Revolution.',
+      jp: '[Edo to Meiji Restoration] The Tokugawa isolationist policy fostered Ukiyo-e. In 1868, the Meiji Restoration modernized Japan into a global power.',
+      wl: '[Industrial & Scientific Revolutions] The British Industrial Revolution and the American/French Revolutions reshaped the world, establishing Western global hegemony.'
+    },
+    ja: {
+      name: '清', yrs: '1644–1912 AD', tag: '技巧の極みと東西融合',
+      desc: '中国最後の王朝。康熙・雍正・乾隆の三代で国力は頂点に達し、華麗な宮廷芸術が栄えた。宣教師が西洋画法をもたらし和洋折衷の様式も生まれた。',
+      emps: '康熙帝、雍正帝、乾隆帝、西太后',
+      events: '康雍乾の盛世、アヘン戦争、辛亥革命による帝制崩壊。',
+      jp: '【江戸時代～明治維新】鎖国下で「浮世絵」などの町人文化が成熟。1868年の明治維新によって急速に近代化を推し進めた。',
+      wl: '【科学革命と産業革命】イギリスの産業革命、アメリカ独立やフランス革命など、西洋が科学技術と軍事力で世界覇権を確立した。'
+    },
+    art: [
+      { img: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Hundred_Horses_by_Giuseppe_Castiglione.jpg',
+        zh: { name: '郎世寧《百駿圖》', where: '國立故宮博物院 (台北)', desc: '義大利傳教士融合歐洲光影透視與中國線條筆墨，生動描繪百匹駿馬。' },
+        en: { name: 'One Hundred Horses', where: 'National Palace Museum (Taipei)', desc: 'Jesuit Giuseppe Castiglione fused Western perspective with Chinese brushwork to depict 100 dynamic horses.' },
+        ja: { name: '郎世寧「百駿図」', where: '国立故宮博物院 (台北)', desc: 'イタリア人宣教師が西洋の透視図法と中国の筆墨を融合させ、百頭の馬を描いた傑作。' }
+      }
+    ]
+  }
+];
+
+let lang = 'zh';
+let civs = { jp: true, wl: true };
+let yr = -2100;
+let expId = null;
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lb').forEach(b => b.classList.remove('on'));
+  document.querySelector(`.lb[onclick="setLang('${l}')"]`).classList.add('on');
+  
+  document.getElementById('htitle').textContent = UI[l].htitle;
+  document.getElementById('hsub').textContent = UI[l].hsub;
+  
+  const btnJp = document.querySelector('.cb[data-c="jp"]');
+  const btnWl = document.querySelector('.cb[data-c="wl"]');
+  btnJp.textContent = (l==='en') ? '🇯🇵 Japan' : '🇯🇵 日本';
+  btnWl.textContent = (l==='en') ? '🌍 World' : '🌍 世界';
+
+  updateScrubberText();
+  render();
+}
+
+function toggleCiv(c) {
+  civs[c] = !civs[c];
+  document.querySelector(`.cb[data-c="${c}"]`).classList.toggle('on', civs[c]);
+  render();
+}
+
+function updateScrubberText() {
+  const y = yr;
+  const t = y < 0 ? `${Math.abs(y)} BC` : `${y} AD`;
+  document.getElementById('syr').textContent = `${t} ${UI[lang].drag}`;
+}
+
+function render() {
+  const container = document.getElementById('mc');
+  let h = '';
+  
+  const items = DATA.filter(d => d.e >= yr);
+  
+  if(items.length === 0) {
+    container.innerHTML = `<div style="text-align:center;color:var(--ink60);padding:40px;">${UI[lang].empty}</div>`;
+    return;
+  }
+
+  items.forEach(d => {
+    const isExp = expId === d.id;
+    const t = d[lang];
+    
+    h += `<div class="dc ${isExp ? 'exp' : ''}" onclick="toggleExp(event, '${d.id}')">
+            <div class="dc-head">
+              <div>
+                <div class="dc-name">${t.name}</div>
+                <div class="dc-yrs">${t.yrs}</div>
+              </div>
+              <div class="dc-tag">${t.tag}</div>
+            </div>
+            
+            <div class="detail" onclick="event.stopPropagation()">
+              <div class="d-rule"></div>
+              <div class="d-desc">${t.desc}</div>
+              
+              <div class="info-grid">
+                <div class="info-box">
+                  <h4>${UI[lang].emp}</h4>
+                  <p>${t.emps}</p>
+                </div>
+                <div class="info-box">
+                  <h4>${UI[lang].event}</h4>
+                  <p>${t.events}</p>
+                </div>
+              </div>
+              
+              <div class="art-sec-title">${UI[lang].art}</div>
+              <div class="art-scroll">`;
+              
+    d.art.forEach((a, idx) => {
+      const at = a[lang];
+      h += `  <div class="art-card" onclick="showArt('${d.id}', ${idx})">
+                <div class="art-img-wrap"><img src="${a.img}" alt="${at.name}" loading="lazy"></div>
+                <div class="art-card-info">
+                  <div class="art-card-title">${at.name}</div>
+                  <div class="art-card-sub">${at.where}</div>
+                </div>
+              </div>`;
+    });
+              
+    h += `    </div>
+              <div class="d-rule" style="margin-top:20px;"></div>`;
+              
+    if (civs.jp || civs.wl) {
+      h += `  <div class="parallel-wrap">`;
+      if (civs.jp) {
+        h += `<div class="p-box p-jp">
+                <div class="p-head">🇯🇵 ${lang==='en'?'Japan':lang==='ja'?'日本':'同期日本'}</div>
+                <div class="p-text">${t.jp}</div>
+              </div>`;
+      }
+      if (civs.wl) {
+        h += `<div class="p-box p-wl">
+                <div class="p-head">🌍 ${lang==='en'?'World':lang==='ja'?'世界':'同期世界'}</div>
+                <div class="p-text">${t.wl}</div>
+              </div>`;
+      }
+      h += `  </div>`;
+    }
+              
+    h += `  </div>
+          </div>`;
+  });
+  
+  container.innerHTML = h;
+}
+
+function toggleExp(e, id) {
+  if (expId === id && e.target.closest('.detail')) return;
+  expId = expId === id ? null : id;
+  render();
+  if(expId) {
+    setTimeout(() => {
+      const el = document.querySelector('.dc.exp');
+      if(el) {
+        const y = el.getBoundingClientRect().top + window.pageYOffset - 90;
+        window.scrollTo({top: y, behavior: 'smooth'});
+      }
+    }, 150);
+  }
+}
+
+function showArt(did, ai) {
+  const d = DATA.find(x => x.id === did);
+  const a = d.art[ai];
+  const at = a[lang];
+  
+  document.getElementById('mimg').src = a.img;
+  document.getElementById('mtitle').textContent = at.name;
+  document.getElementById('mwhere').textContent = at.where;
+  document.getElementById('mdesc').textContent = at.desc;
+  
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeM() {
+  document.getElementById('modal').classList.remove('show');
+  setTimeout(() => { document.getElementById('mimg').src = ''; }, 200);
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) closeM();
+});
+
+const sl = document.getElementById('sl');
+sl.addEventListener('input', () => {
+  yr = +sl.value;
+  updateScrubberText();
+  expId = null; 
+  render();
+});
+
+setLang('zh');
+</script>
+</body>
+</html>
