@@ -7,15 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* 水墨風格色調 */
-    --paper: #f5f1e7;        /* 宣紙底色 */
-    --paper-dark: #e8e3d3;   /* 宣紙陰影 */
-    --ink-dark: #1a1a1a;     /* 濃墨 */
-    --ink-mid: #4a4a4a;      /* 中墨 */
-    --ink-light: #888888;    /* 淡墨 */
-    --stamp-red: #b22222;    /* 印泥紅 */
-    --gold: #b8860b;         /* 描金 */
-    
+    --paper: #f5f1e7;        
+    --paper-dark: #e8e3d3;   
+    --ink-dark: #1a1a1a;     
+    --ink-mid: #4a4a4a;      
+    --ink-light: #888888;    
+    --stamp-red: #b22222;    
+    --cn-color: #8b2020;
+    --jp-color: #2e4a3d;
+    --wl-color: #2a3d6b;
     --font-serif: 'Noto Serif TC', serif;
     --font-sans: 'Noto Sans TC', sans-serif;
   }
@@ -78,49 +78,70 @@
   .detail-dashboard.show { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .dash-header { margin-bottom: 25px; position: relative; padding-bottom: 15px; }
+  .dash-header { margin-bottom: 30px; position: relative; padding-bottom: 15px; }
   .dash-header::after {
     content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1.5px;
     background: linear-gradient(90deg, var(--ink-dark) 0%, var(--ink-light) 50%, transparent 100%);
   }
-  .dash-title { font-family: var(--font-serif); font-size: 30px; color: var(--ink-dark); font-weight: 900; }
+  .dash-title { font-family: var(--font-serif); font-size: 32px; color: var(--ink-dark); font-weight: 900; }
   .dash-desc { font-size: 14px; color: var(--ink-mid); margin-top: 10px; text-align: justify; line-height: 1.7; }
 
-  /* Grid Layout (三欄對稱) */
-  .history-grid { display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 30px; }
-  @media (min-width: 900px) { .history-grid { grid-template-columns: 1fr 1fr 1fr; gap: 24px; } }
-
-  .hist-col { display: flex; flex-direction: column; gap: 16px; background: rgba(255,255,255,0.4); padding: 20px; border-radius: 4px; border: 1px solid var(--paper-dark); box-shadow: 2px 4px 12px rgba(0,0,0,0.02);}
+  /* ==========================================
+     NEW: Synchronized Timeline (橫向歷史對照)
+     ========================================== */
+  .sync-section-title { font-family: var(--font-serif); font-size: 20px; font-weight: 900; color: var(--ink-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 8px;}
   
-  .col-title { font-family: var(--font-serif); font-size: 16px; font-weight: 900; border-bottom: 1px solid var(--ink-light); padding-bottom: 8px; display: inline-flex; align-items: center; gap: 8px; }
-  .col-cn .col-title { color: var(--stamp-red); border-color: rgba(178, 34, 34, 0.3); }
-  .col-jp .col-title { color: #2e4a3d; border-color: rgba(46, 74, 61, 0.3); }
-  .col-wl .col-title { color: #2a3d6b; border-color: rgba(42, 61, 107, 0.3); }
-
-  .text-block { font-size: 13px; color: var(--ink-mid); text-align: justify; line-height: 1.7; margin-bottom: 5px;}
-
-  /* Mini Timeline (通用於中、日、世界) */
-  .mt-title { font-size: 11px; font-weight: 600; color: var(--ink-light); margin-bottom: 8px; letter-spacing: 0.1em; border-bottom: 1px dashed var(--paper-dark); padding-bottom: 4px;}
-  .mini-timeline { border-left: 1.5px solid var(--paper-dark); margin-left: 4px; padding-left: 12px; margin-bottom: 10px;}
-  .mini-event { position: relative; margin-bottom: 10px; }
-  .mini-event:last-child { margin-bottom: 0; }
-  .mini-event::before { 
-    content: ''; position: absolute; left: -14.5px; top: 5px; width: 5px; height: 5px; 
-    border-radius: 50%; background: var(--ink-mid); 
+  .sync-timeline { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
+  .sync-row { display: flex; flex-direction: column; gap: 10px; padding: 16px; background: rgba(255,255,255,0.4); border: 1px solid var(--paper-dark); border-radius: 4px; box-shadow: 2px 4px 12px rgba(0,0,0,0.02);}
+  @media (min-width: 768px) {
+    .sync-row { flex-direction: row; gap: 24px; align-items: stretch; padding: 20px;}
   }
-  .m-year { font-size: 10px; color: var(--ink-light); font-weight: 600; font-family: var(--font-sans); }
-  .m-text { font-size: 13px; color: var(--ink-dark); margin-top: 1px; line-height: 1.4;}
 
-  /* 藝術史文字清單 (取代圖片) */
-  .art-section { margin-top: 5px; border-top: 1.5px solid var(--ink-dark); padding-top: 12px; }
-  .art-header { font-family: var(--font-serif); font-size: 15px; font-weight: 900; color: var(--ink-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;}
-  .art-desc { font-size: 12px; color: var(--ink-mid); line-height: 1.6; margin-bottom: 10px; }
+  .sync-year { 
+    font-family: var(--font-serif); font-weight: 900; font-size: 16px; color: var(--stamp-red); letter-spacing: 0.05em;
+    border-bottom: 1.5px dashed var(--paper-dark); padding-bottom: 8px; margin-bottom: 4px;
+  }
+  @media (min-width: 768px) {
+    .sync-year { 
+      flex: 0 0 110px; font-size: 15px; text-align: right; border-bottom: none; 
+      border-right: 1.5px dashed var(--paper-dark); padding-bottom: 0; padding-right: 20px; margin-bottom: 0;
+    }
+  }
+
+  .sync-events { flex: 1; display: flex; flex-direction: column; gap: 12px; justify-content: center;}
   
-  .art-list { display: flex; flex-direction: column; gap: 8px; }
-  .art-item { background: var(--paper); border: 1px solid var(--paper-dark); padding: 8px 12px; border-left: 3px solid var(--stamp-red); border-radius: 2px;}
-  .art-item-cat { font-size: 10px; color: var(--stamp-red); font-weight: bold; letter-spacing: 0.05em; margin-bottom: 2px; }
-  .art-item-text { font-size: 13px; color: var(--ink-dark); font-weight: 500; }
-  .art-item-works { font-size: 12px; color: var(--ink-mid); margin-top: 2px; }
+  .s-evt { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.6; color: var(--ink-dark); }
+  .s-evt.hidden { display: none; }
+  .badge { font-size: 11px; padding: 2px 6px; border-radius: 2px; color: #fff; font-weight: 600; white-space: nowrap; margin-top: 2px; font-family: var(--font-sans);}
+  .badge.cn { background-color: var(--cn-color); }
+  .badge.jp { background-color: var(--jp-color); }
+  .badge.wl { background-color: var(--wl-color); }
+
+  /* ==========================================
+     NEW: Arts & Creators Grid (代表藝術與創作者)
+     ========================================== */
+  .art-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 30px; border-top: 1.5px solid var(--ink-dark); padding-top: 24px;}
+  @media (min-width: 900px) { .art-grid { grid-template-columns: 1fr 1fr 1fr; gap: 24px; } }
+  .art-col.hidden { display: none; }
+
+  .art-col-title { font-family: var(--font-serif); font-size: 16px; font-weight: 900; border-bottom: 1px solid var(--ink-light); padding-bottom: 8px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 8px; }
+  .art-col.cn .art-col-title { color: var(--cn-color); border-color: rgba(139, 32, 32, 0.3); }
+  .art-col.jp .art-col-title { color: var(--jp-color); border-color: rgba(46, 74, 61, 0.3); }
+  .art-col.wl .art-col-title { color: var(--wl-color); border-color: rgba(42, 61, 107, 0.3); }
+
+  .art-list { display: flex; flex-direction: column; gap: 12px; }
+  .art-item { background: var(--paper); border: 1px solid var(--paper-dark); padding: 10px 14px; border-radius: 2px;}
+  .art-col.cn .art-item { border-left: 3px solid var(--cn-color); }
+  .art-col.jp .art-item { border-left: 3px solid var(--jp-color); }
+  .art-col.wl .art-item { border-left: 3px solid var(--wl-color); }
+  
+  .art-item-cat { font-size: 11px; font-weight: bold; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .art-col.cn .art-item-cat { color: var(--cn-color); }
+  .art-col.jp .art-item-cat { color: var(--jp-color); }
+  .art-col.wl .art-item-cat { color: var(--wl-color); }
+  
+  .art-item-text { font-size: 14px; color: var(--ink-dark); font-weight: 600; line-height: 1.4; margin-bottom: 2px;}
+  .art-item-works { font-size: 12px; color: var(--ink-mid); line-height: 1.5;}
 
 </style>
 </head>
@@ -128,7 +149,7 @@
 
 <nav class="nav">
   <div class="nav-logo">ARTVUE</div>
-  <div class="nav-name" id="ui-sub">亞洲與世界藝術史</div>
+  <div class="nav-name" id="ui-sub">亞洲與世界藝術史對照</div>
   
   <div class="lang-grp">
     <button class="lb on" onclick="setLang('zh')">中</button>
@@ -137,8 +158,8 @@
   </div>
 
   <div class="civ-grp">
-    <button class="cb on" data-c="jp" onclick="toggleCiv('jp')">🇯🇵 日本對照</button>
-    <button class="cb on" data-c="wl" onclick="toggleCiv('wl')">🌍 世界對照</button>
+    <button class="cb on" data-c="jp" onclick="toggleCiv('jp')">🇯🇵 日本</button>
+    <button class="cb on" data-c="wl" onclick="toggleCiv('wl')">🌍 世界</button>
   </div>
 </nav>
 
@@ -149,299 +170,346 @@
 
 <script>
 const UI = {
-  zh: { sub: '亞洲與世界藝術史', cn: '🇨🇳 中國史實', jp: '🇯🇵 同期日本', wl: '🌍 同期世界', emp: '👑 重要君王 / 領袖', evt: '📜 重大事件', art: '🏛️ 代表藝術與創作者', btnJp: '🇯🇵 日本對照', btnWl: '🌍 世界對照' },
-  en: { sub: 'Asian & World Art History', cn: '🇨🇳 Chinese History', jp: '🇯🇵 Parallel Japan', wl: '🌍 Parallel World', emp: '👑 Key Leaders', evt: '📜 Major Events', art: '🏛️ Arts & Creators', btnJp: '🇯🇵 Japan', btnWl: '🌍 World' },
-  ja: { sub: 'アジアと世界芸術史', cn: '🇨🇳 中国歴史', jp: '🇯🇵 同時代日本', wl: '🌍 同時代世界', emp: '👑 主要な君主・指導者', evt: '📜 重要な事件', art: '🏛️ 代表的な芸術と作家', btnJp: '🇯🇵 日本対照', btnWl: '🌍 世界対照' }
+  zh: { sub: '亞洲與世界藝術史對照', tSync: '⏳ 歷史與君王同期對照', tArt: '🏛️ 代表藝術與創作者', badge: { cn:'中國', jp:'日本', wl:'世界' } },
+  en: { sub: 'Asian & World Art History', tSync: '⏳ Synchronized Timeline', tArt: '🏛️ Arts & Creators', badge: { cn:'China', jp:'Japan', wl:'World' } },
+  ja: { sub: 'アジアと世界芸術史', tSync: '⏳ 歴史と君主の同時代対照', tArt: '🏛️ 代表的な芸術と作家', badge: { cn:'中国', jp:'日本', wl:'世界' } }
 };
 
 const DATA = [
   {
     id: 'shang-zhou', year: 'c.2100 - 221 BC',
     zh: {
-      name: '夏・商・周', desc: '中國文明奠基。商朝確立祭祀國家，青銅技術達頂峰。東周迎來「百家爭鳴」的思想黃金時代。',
-      cn: {
-        emps: [{y: '前1046', t: '周武王 (建立西周)'}, {y: '前770', t: '周平王 (東遷，春秋開始)'}],
-        evts: [{y: '前14世紀', t: '盤庚遷殷，甲骨文成熟'}, {y: '前356', t: '商鞅變法'}]
-      },
-      jp: {
-        desc: '【繩文至彌生初期】以狩獵採集為主，製作獨特繩紋陶器。約西元前3世紀，亞洲大陸傳入水稻與金屬器。',
-        emps: [{y: '前660', t: '神武天皇 (傳說建國)'}],
-        evts: [{y: '前1萬年', t: '繩文時代開始'}, {y: '前3世紀', t: '稻作與鐵器傳入 (彌生時代)'}]
-      },
-      wl: {
-        desc: '【軸心時代】全球早期文明成形。古埃及建神廟；巴比倫頒布法典。隨後希臘城邦、羅馬與印度佛教同步發展。',
-        emps: [{y: '前1279', t: '拉美西斯二世 (古埃及)'}, {y: '前336', t: '亞歷山大大帝 (馬其頓)'}],
-        evts: [{y: '前1750', t: '漢摩拉比法典'}, {y: '前5世紀', t: '雅典民主黃金時代'}]
-      },
-      art: {
-        desc: '青銅器由祭祀的神秘威嚴，轉向周代銘文記載的禮樂制度。',
-        items: [
-          { c: '青銅器', t: '商代禮器巔峰', w: '后母戊鼎、婦好鴞尊' },
-          { c: '青銅樂器', t: '周代禮樂文化', w: '曾侯乙編鐘 (戰國)' }
-        ]
-      }
+      name: '夏・商・周', desc: '中國文明奠基。商朝確立祭祀國家，青銅技術達頂峰。東周迎來「百家爭鳴」的思想黃金時代。全球處於「軸心時代」，各大古文明哲學同步爆發。',
+      sync: [
+        { y: '約前15-13世紀', cn: '盤庚遷殷，甲骨文成熟。商代青銅文化鼎盛', jp: '處於繩文時代，以狩獵採集為主', wl: '古埃及新王國時期（拉美西斯二世建立神廟）' },
+        { y: '前1046年', cn: '周武王伐紂，建立西周，確立封建與宗法制度', jp: '', wl: '古希臘邁錫尼文明逐漸衰落' },
+        { y: '前5-4世紀', cn: '春秋戰國時期。孔子、老子等諸子百家爭鳴', jp: '亞洲大陸水稻與金屬器傳入，進入彌生時代', wl: '古希臘雅典黃金時代；印度釋迦牟尼創立佛教' }
+      ],
+      art_cn: [
+        { c: '青銅禮器', t: '商代祭祀權力象徵', w: '后母戊鼎、四羊方尊、婦好鴞尊' },
+        { c: '青銅樂器', t: '周代禮樂文化載體', w: '曾侯乙編鐘 (戰國時期)' }
+      ],
+      art_jp: [
+        { c: '陶器工藝', t: '繩紋圖案與實用結合', w: '火焰型土器 (繩文時代)' },
+        { c: '青銅信仰', t: '祭祀用銅器傳入', w: '銅鐸、銅劍 (彌生時代)' }
+      ],
+      art_wl: [
+        { c: '古埃及壁畫與雕塑', t: '追求永恆與秩序的藝術', w: '圖坦卡門黃金面具' },
+        { c: '古希臘古典雕塑', t: '人體比例與和諧美的極致', w: '帕德嫩神廟雕塑、《擲鐵餅者》' }
+      ]
     },
     en: {
-      name: 'Xia, Shang, Zhou', desc: 'Foundation of Chinese civilization. Shang perfected bronze casting. Eastern Zhou saw the "Hundred Schools of Thought".',
-      cn: { emps: [{y: '1046 BC', t: 'King Wu (W. Zhou)'}], evts: [{y: '14th C. BC', t: 'Oracle bones mature'}, {y: '356 BC', t: 'Shang Yang Reforms'}] },
-      jp: { desc: 'Hunter-gatherer Jomon period transitioned to agricultural Yayoi period around 300 BC.', emps: [{y: '660 BC', t: 'Emperor Jimmu (Legendary)'}], evts: [{y: '300 BC', t: 'Introduction of rice farming'}] },
-      wl: { desc: 'Global "Axial Age". Early empires in Egypt/Babylon, followed by classical Greece and Rome.', emps: [{y: '1279 BC', t: 'Ramesses II'}, {y: '336 BC', t: 'Alexander the Great'}], evts: [{y: '1750 BC', t: 'Code of Hammurabi'}] },
-      art: { desc: 'Bronzes evolved from mystical ritual items to ceremonial instruments.', items: [{ c: 'Bronze Vessels', t: 'Peak of Shang casting', w: 'Houmuwu Ding' }, { c: 'Bronze Instruments', t: 'Zhou ritual music', w: 'Marquis Yi Bells' }] }
+      name: 'Xia, Shang, Zhou', desc: 'Foundation of Chinese civilization and the global "Axial Age".',
+      sync: [
+        { y: 'c. 15th-13th C. BC', cn: 'Oracle bones mature; peak of Shang bronzes', jp: 'Jomon period (hunter-gatherer)', wl: 'Egypt New Kingdom (Ramesses II)' },
+        { y: '1046 BC', cn: 'King Wu establishes Western Zhou', jp: '', wl: 'Decline of Mycenaean Greece' },
+        { y: '5th-4th C. BC', cn: 'Hundred Schools of Thought (Confucius, Laozi)', jp: 'Rice & metal introduced (Yayoi)', wl: 'Golden Age of Athens; Buddha founds Buddhism' }
+      ],
+      art_cn: [{ c: 'Ritual Bronzes', t: 'Shang symbol of power', w: 'Houmuwu Ding' }, { c: 'Bronze Instruments', t: 'Zhou ritual music', w: 'Marquis Yi Bells' }],
+      art_jp: [{ c: 'Pottery', t: 'Cord-marked vessels', w: 'Flame-style Jomon Pottery' }, { c: 'Bronze Beliefs', t: 'Ritual bronzes', w: 'Dotaku (bronze bells)' }],
+      art_wl: [{ c: 'Egyptian Art', t: 'Eternity and order', w: 'Mask of Tutankhamun' }, { c: 'Classical Greek', t: 'Human proportion', w: 'Parthenon Sculptures' }]
     },
     ja: {
-      name: '夏・殷・周', desc: '中国文明の基礎。殷は青銅器が頂点に。東周は「百家争鳴」の哲学黄金時代を迎えた。',
-      cn: { emps: [{y: '前1046', t: '武王（西周建国）'}], evts: [{y: '前14世紀', t: '甲骨文字の成熟'}, {y: '前356', t: '商鞅の変法'}] },
-      jp: { desc: '狩猟採集の縄文時代から、紀元前3世紀頃に大陸より稲作が伝来し弥生時代へ。', emps: [{y: '前660', t: '神武天皇（伝説）'}], evts: [{y: '前3世紀', t: '水稲農耕と金属器の伝来'}] },
-      wl: { desc: '「枢軸時代」。エジプト・バビロニアの古代文明から、ギリシャ・ローマの古典古代へ。', emps: [{y: '前1279', t: 'ラムセス2世'}, {y: '前336', t: 'アレクサンドロス大王'}], evts: [{y: '前1750', t: 'ハンムラビ法典'}] },
-      art: { desc: '青銅器は祭祀の威厳から周代の礼楽制度の象徴へと変化。', items: [{ c: '青銅器', t: '商代礼器の頂点', w: '后母戊鼎' }, { c: '青銅楽器', t: '周代の礼楽', w: '曾侯乙編鐘' }] }
+      name: '夏・殷・周', desc: '中国文明の基礎。東周は「百家争鳴」の哲学黄金時代。世界も「枢軸時代」を迎える。',
+      sync: [
+        { y: '前15-13世紀頃', cn: '甲骨文字の成熟。殷の青銅器文化の最盛期', jp: '縄文時代（狩猟採集社会）', wl: 'エジプト新王国時代（ラムセス2世）' },
+        { y: '前1046年', cn: '武王が西周を建国し、封建制度を確立', jp: '', wl: 'ギリシャ・ミケーネ文明の衰退' },
+        { y: '前5-4世紀', cn: '春秋戦国時代。孔子や老子など諸子百家', jp: '大陸より稲作と金属器が伝来（弥生時代へ）', wl: 'アテネの黄金時代。インドで仏教誕生' }
+      ],
+      art_cn: [{ c: '青銅礼器', t: '殷代祭祀の象徴', w: '后母戊鼎' }, { c: '青銅楽器', t: '周代の礼楽文化', w: '曾侯乙編鐘' }],
+      art_jp: [{ c: '土器工芸', t: '縄目模様と装飾', w: '火焔型土器' }, { c: '青銅器信仰', t: '祭祀用具', w: '銅鐸（弥生時代）' }],
+      art_wl: [{ c: 'エジプト美術', t: '永遠と秩序の芸術', w: 'ツタンカーメンの黄金のマスク' }, { c: 'ギリシャ彫刻', t: '人体美と調和', w: 'パルテノン神殿彫刻' }]
     }
   },
   {
     id: 'qin-han', year: '221 BC - 220 AD',
     zh: {
-      name: '秦・漢', desc: '秦始皇首度大一統。漢朝鞏固帝制並打通絲路，中西方首次大規模交流。陵墓藝術展現宏大宇宙觀。',
-      cn: {
-        emps: [{y: '前221', t: '秦始皇 (統一天下)'}, {y: '前141-前87', t: '漢武帝 (開拓西域)'}],
-        evts: [{y: '前138', t: '張騫出使西域'}, {y: '105', t: '蔡倫改進造紙術'}]
-      },
-      jp: {
-        desc: '【彌生中後期】出現早期國家型態，與亞洲大陸開始有正式的朝貢與外交關係。',
-        emps: [{y: '3世紀', t: '卑彌呼 (邪馬台國女王)'}],
-        evts: [{y: '57', t: '漢光武帝賜「漢委奴國王」金印'}, {y: '239', t: '卑彌呼遣使曹魏'}]
-      },
-      wl: {
-        desc: '【羅馬帝國】羅馬共和國轉型為帝國，迎來「羅馬和平」。羅馬與漢朝並列歐亞大陸兩大超級強權。',
-        emps: [{y: '前44', t: '凱撒大帝 (遇刺)'}, {y: '前27', t: '奧古斯都 (羅馬帝國開國)'}],
-        evts: [{y: '約西元元年', t: '耶穌誕生'}, {y: '79', t: '龐貝古城被火山掩埋'}]
-      },
-      art: {
-        desc: '厚葬風氣盛行，帛畫與陶俑寫實細膩，奠定中國敘事藝術的基礎。',
-        items: [
-          { c: '陵墓雕塑', t: '寫實主義的極致', w: '秦始皇兵馬俑、漢代擊鼓說唱俑' },
-          { c: '帛畫與畫像磚', t: '漢代宇宙觀與生活紀實', w: '馬王堆 T 型帛畫' }
-        ]
-      }
+      name: '秦・漢', desc: '秦始皇首度大一統。漢武帝打通絲路，中西方首次大規模交流。羅馬與漢朝並列歐亞大陸兩大超級強權。',
+      sync: [
+        { y: '前221年', cn: '秦始皇統一天下，建立帝制與度量衡', jp: '處於彌生時代中期，逐漸形成部落國家', wl: '羅馬共和國在布匿戰爭後迅速擴張' },
+        { y: '前2世紀末', cn: '漢武帝開拓西域，張騫開闢「絲綢之路」', jp: '', wl: '羅馬征服希臘，吸收希臘文化' },
+        { y: '西元 1世紀', cn: '漢光武帝建立東漢 (西元25年)', jp: '西元57年，獲光武帝賜「漢委奴國王」金印', wl: '奧古斯都建立羅馬帝國；耶穌誕生，基督教萌芽' },
+        { y: '西元 2世紀', cn: '蔡倫改進造紙術 (105年)，促進文化傳播', jp: '卑彌呼統治邪馬台國，後遣使曹魏 (239年)', wl: '羅馬帝國達「五賢帝」鼎盛時期 (羅馬和平)' }
+      ],
+      art_cn: [
+        { c: '陵墓雕塑', t: '氣勢恢宏的寫實主義', w: '秦始皇兵馬俑、漢代擊鼓說唱俑' },
+        { c: '繪畫與帛畫', t: '展現漢代宇宙觀與升仙思想', w: '馬王堆 T型帛畫' },
+        { c: '畫像磚石', t: '紀錄市井生活與神話敘事', w: '四川漢代畫像磚' }
+      ],
+      art_jp: [
+        { c: '彌生陶器', t: '實用與簡潔的轉變', w: '彌生式土器' },
+        { c: '金屬工藝', t: '大陸技術的在地化', w: '三角緣神獸鏡 (銅鏡)' }
+      ],
+      art_wl: [
+        { c: '羅馬寫實雕塑', t: '統治者威權與寫真還原', w: '奧古斯都像' },
+        { c: '建築與壁畫', t: '拱門技術與生活享樂', w: '羅馬競技場、龐貝古城壁畫' }
+      ]
     },
     en: {
-      name: 'Qin & Han', desc: 'Qin unified China. Han expanded the Silk Road. Tomb art reflected profound cosmology.',
-      cn: { emps: [{y: '221 BC', t: 'Qin Shi Huang'}, {y: '141-87 BC', t: 'Emperor Wu of Han'}], evts: [{y: '138 BC', t: 'Zhang Qian missions'}, {y: '105 AD', t: 'Cai Lun refines paper'}] },
-      jp: { desc: 'Early states emerge in Japan, establishing diplomatic ties with the continent.', emps: [{y: '3rd C.', t: 'Queen Himiko'}], evts: [{y: '57 AD', t: 'King of Na gold seal from Han'}] },
-      wl: { desc: 'Rome transitions to an Empire (Pax Romana). Rome and Han dominate Eurasia.', emps: [{y: '27 BC', t: 'Augustus (Roman Emp.)'}], evts: [{y: '1 AD (approx)', t: 'Birth of Jesus'}, {y: '79 AD', t: 'Pompeii buried'}] },
-      art: { desc: 'Elaborate burial customs produced highly realistic terracotta and silk paintings.', items: [{ c: 'Tomb Sculpture', t: 'Peak of realism', w: 'Terracotta Army' }, { c: 'Silk Painting', t: 'Han cosmology', w: 'Mawangdui Banner' }] }
+      name: 'Qin & Han', desc: 'Qin unifies China. Emperor Wu opens the Silk Road. Rome and Han dominate Eurasia as two superpowers.',
+      sync: [
+        { y: '221 BC', cn: 'Qin Shi Huang unifies China', jp: 'Mid-Yayoi period, early tribes form', wl: 'Roman Republic expands rapidly' },
+        { y: 'Late 2nd C. BC', cn: 'Emperor Wu opens Silk Road via Zhang Qian', jp: '', wl: 'Rome conquers and absorbs Greek culture' },
+        { y: '1st C. AD', cn: 'Eastern Han established (25 AD)', jp: 'Receives "King of Na" gold seal from Han (57 AD)', wl: 'Augustus founds Roman Empire; Christianity emerges' },
+        { y: '2nd C. AD', cn: 'Cai Lun refines papermaking (105 AD)', jp: 'Queen Himiko rules Yamatai', wl: 'Pax Romana under the Five Good Emperors' }
+      ],
+      art_cn: [{ c: 'Tomb Sculpture', t: 'Monumental realism', w: 'Terracotta Army' }, { c: 'Silk Painting', t: 'Han cosmology', w: 'Mawangdui Banner' }, { c: 'Tomb Reliefs', t: 'Daily life & myths', w: 'Han Pictorial Bricks' }],
+      art_jp: [{ c: 'Yayoi Pottery', t: 'Functional simplicity', w: 'Yayoi vessels' }, { c: 'Metalwork', t: 'Localized continental tech', w: 'Bronze Mirrors' }],
+      art_wl: [{ c: 'Roman Sculpture', t: 'Realistic portraiture', w: 'Augustus of Prima Porta' }, { c: 'Architecture & Frescoes', t: 'Arches and lavish living', w: 'Colosseum, Pompeii Frescoes' }]
     },
     ja: {
-      name: '秦・漢', desc: '始皇帝が初の統一。漢武帝がシルクロードを開拓。漢代の陵墓芸術は宇宙観を表現。',
-      cn: { emps: [{y: '前221', t: '始皇帝'}, {y: '前141-前87', t: '漢武帝'}], evts: [{y: '前138', t: '張騫の西域派遣'}, {y: '105', t: '蔡倫が製紙法を改良'}] },
-      jp: { desc: '初期国家が形成され、大陸との正式な朝貢・外交関係が始まった。', emps: [{y: '3世紀', t: '卑弥呼（邪馬台国）'}], evts: [{y: '57', t: '光武帝より金印授与'}, {y: '239', t: '卑弥呼が魏へ遣使'}] },
-      wl: { desc: 'ローマが帝国へ移行しパクス・ロマーナを迎える。ローマと漢が二大強国に。', emps: [{y: '前27', t: 'アウグストゥス（初代皇帝）'}], evts: [{y: '紀元元年頃', t: 'キリスト誕生'}, {y: '79', t: 'ポンペイ滅亡'}] },
-      art: { desc: '厚葬の風習により、写実的な兵馬俑や帛画など叙事芸術の基礎が築かれた。', items: [{ c: '陵墓彫刻', t: '写実主義の極致', w: '兵馬俑' }, { c: '帛画', t: '漢代の宇宙観', w: '馬王堆帛画' }] }
+      name: '秦・漢', desc: '始皇帝の統一。武帝によるシルクロード開拓。ローマと漢がユーラシアの二大超大国となる。',
+      sync: [
+        { y: '前221年', cn: '始皇帝が天下統一、帝制を確立', jp: '弥生時代中期、初期の小国が形成', wl: 'ローマ共和政の急速な拡大' },
+        { y: '前2世紀末', cn: '武帝が西域を開拓、張騫がシルクロードを開く', jp: '', wl: 'ローマがギリシャを征服し文化を吸収' },
+        { y: '1世紀', cn: '光武帝が後漢を建国 (25年)', jp: '光武帝より「漢委奴国王」の金印を授かる (57年)', wl: 'ローマ帝国の成立（アウグストゥス）。キリスト教誕生' },
+        { y: '2世紀', cn: '蔡倫が製紙法を改良 (105年)', jp: '卑弥呼が邪馬台国を統治、後に魏へ遣使 (239年)', wl: '五賢帝時代（パクス・ロマーナの頂点）' }
+      ],
+      art_cn: [{ c: '陵墓彫刻', t: '壮大な写実主義', w: '兵馬俑' }, { c: '帛画', t: '宇宙観と昇仙思想', w: '馬王堆帛画' }, { c: '画像磚', t: '生活と神話の記録', w: '漢代画像磚' }],
+      art_jp: [{ c: '弥生土器', t: '実用性と簡潔さ', w: '弥生式土器' }, { c: '金属工芸', t: '大陸技術の受容', w: '三角縁神獣鏡' }],
+      art_wl: [{ c: 'ローマ彫刻', t: '写実的な権力者像', w: 'アウグストゥス像' }, { c: '建築と壁画', t: 'アーチ技術と享楽生活', w: 'コロッセオ、ポンペイ壁画' }]
     }
   },
   {
     id: 'tang', year: '618 - 907 AD',
     zh: {
-      name: '唐', desc: '中國史上最開放的黃金時代。長安為世界最大都會，詩歌、書法與人物畫皆達到歷史最高峰。',
-      cn: {
-        emps: [{y: '626-649', t: '唐太宗 (貞觀之治)'}, {y: '690-705', t: '武則天'}, {y: '712-756', t: '唐玄宗 (開元盛世)'}],
-        evts: [{y: '627', t: '玄奘西行印度'}, {y: '755', t: '安史之亂 (由盛轉衰)'}]
-      },
-      jp: {
-        desc: '【飛鳥～平安初期】全面學習唐朝律令制與佛教。頻繁派遣「遣唐使」，奠定日本古典文化。',
-        emps: [{y: '593-622', t: '聖德太子 (攝政)'}, {y: '781-806', t: '桓武天皇'}],
-        evts: [{y: '645', t: '大化革新'}, {y: '794', t: '遷都平安京 (京都)'}]
-      },
-      wl: {
-        desc: '【阿拉伯帝國崛起】伊斯蘭教創立並迅速擴張，形成橫跨歐亞非的阿拉伯帝國。歐洲處於中世紀前期。',
-        emps: [{y: '610-632', t: '穆罕默德 (創立伊斯蘭教)'}, {y: '768-814', t: '查理曼大帝 (法蘭克國王)'}],
-        evts: [{y: '622', t: '伊斯蘭教紀元開始'}, {y: '800', t: '查理曼加冕為羅馬皇帝'}]
-      },
-      art: {
-        desc: '海納百川的國際文化，促成書法法度確立與彩陶工藝的突破。',
-        items: [
-          { c: '唐三彩', t: '吸收西域風格的釉陶', w: '唐三彩馬、駱駝載樂俑' },
-          { c: '書法與繪畫', t: '楷書定型與人物畫突破', w: '顏真卿《祭姪文稿》、吳道子畫風' }
-        ]
-      }
+      name: '唐', desc: '中國史上最開放的盛世，長安為世界都會。日本全盤吸收唐文化；阿拉伯帝國亦在此時強勢崛起。',
+      sync: [
+        { y: '7世紀初', cn: '唐太宗開創「貞觀之治」', jp: '聖德太子攝政，推動飛鳥時代佛教文化', wl: '穆罕默德創立伊斯蘭教 (610年)' },
+        { y: '7世紀中', cn: '玄奘赴印度取經回長安 (645年)', jp: '實施「大化革新」(645年)，全面學習唐朝律令', wl: '阿拉伯帝國迅速擴張，征服波斯與中東' },
+        { y: '8世紀中', cn: '唐玄宗「開元盛世」達頂峰，隨後爆發安史之亂', jp: '奈良時代，頻繁派遣「遣唐使」，編纂《萬葉集》', wl: '法蘭克王國崛起，查理曼大帝加冕為羅馬皇帝 (800年)' },
+        { y: '9世紀末', cn: '黃巢之亂，唐朝走向滅亡', jp: '平安時代中期，停止派遣遣唐使，發展本土國風文化', wl: '伊斯蘭黃金時代 (阿拔斯王朝)，翻譯大量希臘文獻' }
+      ],
+      art_cn: [
+        { c: '陶瓷工藝', t: '展現異國風情的釉陶', w: '唐三彩 (馬、駱駝載樂俑)' },
+        { c: '人物畫', t: '大唐盛世的雍容華貴', w: '吳道子、周昉《簪花仕女圖》' },
+        { c: '書法', t: '楷書與狂草的法則', w: '顏真卿《祭姪文稿》、張旭' }
+      ],
+      art_jp: [
+        { c: '佛教建築與雕刻', t: '受大陸影響的木造建築巔峰', w: '法隆寺、東大寺盧舍那大佛' },
+        { c: '天平文化藝術', t: '充滿寫實感的唐風藝術', w: '興福寺阿修羅像、正倉院寶物' }
+      ],
+      art_wl: [
+        { c: '伊斯蘭藝術', t: '幾何、蔓草圖案與書法', w: '圓頂清真寺 (耶路撒冷)' },
+        { c: '拜占庭藝術', t: '宗教神聖感的鑲嵌畫', w: '聖索菲亞大教堂內部裝飾' }
+      ]
     },
     en: {
-      name: 'Tang', desc: 'Cosmopolitan golden age. Chang\'an was the world\'s largest city. Poetry, calligraphy, and painting peaked.',
-      cn: { emps: [{y: '626-649', t: 'Emperor Taizong'}, {y: '690-705', t: 'Wu Zetian'}], evts: [{y: '627', t: 'Xuanzang\'s journey'}, {y: '755', t: 'An Lushan Rebellion'}] },
-      jp: { desc: 'Comprehensive adoption of Tang systems via Taika Reforms and envoys (Kento-shi).', emps: [{y: '593-622', t: 'Prince Shotoku'}, {y: '781-806', t: 'Emperor Kanmu'}], evts: [{y: '645', t: 'Taika Reforms'}, {y: '794', t: 'Capital moved to Heian-kyo'}] },
-      wl: { desc: 'Rise of Islam and the Arab Empire. Europe in the Early Middle Ages under Charlemagne.', emps: [{y: '610-632', t: 'Muhammad'}, {y: '768-814', t: 'Charlemagne'}], evts: [{y: '622', t: 'Islamic calendar begins'}] },
-      art: { desc: 'An international culture fostered breakthroughs in calligraphy and tri-color glazed pottery.', items: [{ c: 'Tang Sancai', t: 'Central Asian influenced pottery', w: 'Sancai Horses' }, { c: 'Calligraphy', t: 'Standard script masters', w: 'Yan Zhenqing\'s works' }] }
+      name: 'Tang', desc: 'Cosmopolitan golden age. Japan adopts Tang culture; the Arab Empire rapidly rises globally.',
+      sync: [
+        { y: 'Early 7th C.', cn: 'Emperor Taizong (Zhenguan Reign)', jp: 'Prince Shotoku promotes Buddhism (Asuka period)', wl: 'Muhammad founds Islam (610 AD)' },
+        { y: 'Mid 7th C.', cn: 'Xuanzang returns from India (645)', jp: 'Taika Reforms (645) adopt Tang legal systems', wl: 'Arab Empire expands across the Middle East' },
+        { y: 'Mid 8th C.', cn: 'High Tang (Xuanzong) followed by An Lushan Rebellion', jp: 'Nara period: Envoys to Tang, "Manyoshu" compiled', wl: 'Charlemagne crowned Roman Emperor (800 AD)' },
+        { y: 'Late 9th C.', cn: 'Huang Chao Rebellion, Tang declines', jp: 'Heian period: Envoys stopped, native culture grows', wl: 'Islamic Golden Age (Abbasid Caliphate)' }
+      ],
+      art_cn: [{ c: 'Ceramics', t: 'Exotic glazed pottery', w: 'Tang Sancai' }, { c: 'Figure Painting', t: 'Opulence of the court', w: 'Zhou Fang (Court Ladies)' }, { c: 'Calligraphy', t: 'Standard & wild cursive', w: 'Yan Zhenqing' }],
+      art_jp: [{ c: 'Buddhist Architecture', t: 'Continental influence', w: 'Horyu-ji, Todai-ji Great Buddha' }, { c: 'Tenpyo Art', t: 'Realistic Tang-style art', w: 'Ashura statue, Shosoin treasures' }],
+      art_wl: [{ c: 'Islamic Art', t: 'Geometry and calligraphy', w: 'Dome of the Rock' }, { c: 'Byzantine Art', t: 'Sacred mosaics', w: 'Hagia Sophia interiors' }]
     },
     ja: {
-      name: '唐', desc: '最も開放的な黄金時代。首都長安は世界最大の都市。詩、書道、人物画が歴史的な最高峰に達した。',
-      cn: { emps: [{y: '626-649', t: '太宗（貞観の治）'}, {y: '690-705', t: '武則天'}], evts: [{y: '627', t: '玄奘の求法'}, {y: '755', t: '安史の乱'}] },
-      jp: { desc: '唐の律令制や仏教を全面的に導入。遣唐使を派遣し、日本古典文化の基礎を築いた。', emps: [{y: '593-622', t: '聖徳太子'}, {y: '781-806', t: '桓武天皇'}], evts: [{y: '645', t: '大化の改新'}, {y: '794', t: '平安京遷都'}] },
-      wl: { desc: 'イスラム教が拡大しアラブ帝国を形成。欧州は中世前期（フランク王国）。', emps: [{y: '610-632', t: 'ムハンマド'}, {y: '768-814', t: 'カール大帝'}], evts: [{y: '800', t: 'カールの戴冠'}] },
-      art: { desc: '国際色豊かな文化が、書道の確立や彩陶工芸の革新をもたらした。', items: [{ c: '唐三彩', t: '西域の要素を取り入れた釉陶', w: '唐三彩馬' }, { c: '書道', t: '楷書の完成', w: '顔真卿の書' }] }
+      name: '唐', desc: '最も開放的な盛世。日本は唐文化を全面的に吸収。中東ではアラブ帝国が強勢に台頭。',
+      sync: [
+        { y: '7世紀初', cn: '太宗による「貞観の治」', jp: '聖徳太子が摂政に。飛鳥文化（仏教伝来）', wl: 'ムハンマドがイスラム教を創始 (610年)' },
+        { y: '7世紀中', cn: '玄奘がインドから帰国 (645年)', jp: '大化の改新 (645年)。唐の律令制を導入', wl: 'アラブ帝国が急拡大し中東を征服' },
+        { y: '8世紀中', cn: '玄宗の「開元の治」のち安史の乱', jp: '奈良時代。遣唐使を頻繁に派遣、『万葉集』成立', wl: 'フランク王国台頭。カール大帝の戴冠 (800年)' },
+        { y: '9世紀末', cn: '黄巣の乱、唐の滅亡へ', jp: '平安時代中期。遣唐使を廃止し国風文化へ', wl: 'イスラム黄金時代（アッバース朝）' }
+      ],
+      art_cn: [{ c: '陶磁器', t: '異国情緒豊かな釉彩', w: '唐三彩' }, { c: '人物画', t: '大唐の華やかさ', w: '呉道子、周昉' }, { c: '書道', t: '楷書と狂草の完成', w: '顔真卿' }],
+      art_jp: [{ c: '仏教建築と彫刻', t: '大陸影響の木造建築', w: '法隆寺、東大寺大仏' }, { c: '天平美術', t: '唐風の写実的美術', w: '興福寺阿修羅像、正倉院宝物' }],
+      art_wl: [{ c: 'イスラム美術', t: '幾何学模様と書道', w: '岩のドーム' }, { c: 'ビザンティン美術', t: '宗教的なモザイク画', w: 'ハギア・ソフィア聖堂' }]
     }
   },
   {
     id: 'song', year: '960 - 1279 AD',
     zh: {
-      name: '宋', desc: '經濟與文化最精緻繁榮的時代。文人階層崛起，確立山水畫哲學意境；宋瓷追求極簡冰清的美學。',
-      cn: {
-        emps: [{y: '960', t: '趙匡胤 (建立北宋)'}, {y: '1100-1126', t: '宋徽宗 (藝術皇帝)'}],
-        evts: [{y: '1069', t: '王安石變法'}, {y: '1127', t: '靖康之難 (南宋建立)'}]
-      },
-      jp: {
-        desc: '【平安中後期～鎌倉】國風文化成熟，隨後爆發源平合戰，武士階級正式掌權建立幕府。',
-        emps: [{y: '1073-1129', t: '白河法皇 (院政)'}, {y: '1192-1199', t: '源賴朝 (首任幕府將軍)'}],
-        evts: [{y: '11世紀初', t: '紫式部著《源氏物語》'}, {y: '1180-1185', t: '源平合戰'}]
-      },
-      wl: {
-        desc: '【十字軍與大學興起】歐洲發動多次十字軍東征促進東西貿易；歐洲最早的大學在此時建立。',
-        emps: [{y: '1189-1199', t: '獅心理查 (英格蘭)'}, {y: '1174-1193', t: '薩拉丁 (阿尤布王朝)'}],
-        evts: [{y: '1096', t: '第一次十字軍東征'}, {y: '1088', t: '博洛尼亞大學建立 (世界最古)'}]
-      },
-      art: {
-        desc: '重文輕武的國策促成文人畫的興盛，陶瓷達到中國極簡美學的最高境界。',
-        items: [
-          { c: '宋代五大名窯', t: '汝、官、哥、鈞、定', w: '汝窯天青釉水仙盆' },
-          { c: '文人山水與風俗畫', t: '哲學意境與市井寫實', w: '范寬《谿山行旅圖》、張擇端《清明上河圖》' }
-        ]
-      }
+      name: '宋', desc: '文人階層崛起，中國美學轉向極致內斂。日本武士掌權；歐洲則藉由十字軍東征開啟文化復甦。',
+      sync: [
+        { y: '10世紀末', cn: '趙匡胤建立北宋 (960年)，實行重文輕武', jp: '平安時代中期，國風文化繁榮，藤原氏攝關政治', wl: '神聖羅馬帝國建立 (962年)' },
+        { y: '11世紀末', cn: '王安石變法，新舊黨爭激烈', jp: '白河法皇開啟「院政」時期', wl: '教皇發動第一次十字軍東征 (1096年)' },
+        { y: '12世紀初', cn: '靖康之難 (1127年)，北宋滅亡，南宋偏安江南', jp: '平氏政權崛起，隨後爆發源平合戰', wl: '歐洲大學興起（博洛尼亞大學、巴黎大學）' },
+        { y: '12世紀末', cn: '南宋理學 (朱熹) 發展至巔峰', jp: '源賴朝建立鎌倉幕府 (1192年)，武士階級正式掌權', wl: '獅心理查與薩拉丁在第三次十字軍東征中交鋒' }
+      ],
+      art_cn: [
+        { c: '宋代五大名窯', t: '追求極簡、冰清玉潔的釉色', w: '汝窯天青釉水仙盆、官窯' },
+        { c: '文人山水畫', t: '哲學意境與留白美學', w: '范寬《谿山行旅圖》、郭熙' },
+        { c: '風俗寫實畫', t: '市井經濟繁榮的寫照', w: '張擇端《清明上河圖》' }
+      ],
+      art_jp: [
+        { c: '大和繪與繪卷', t: '本土審美與故事敘事', w: '《源氏物語繪卷》、《鳥獸人物戲畫》' },
+        { c: '武士文化與佛雕', t: '鎌倉時期剛健寫實的風格', w: '運慶、快慶的金剛力士像' }
+      ],
+      art_wl: [
+        { c: '哥德式建築', t: '高聳入雲與花窗玻璃', w: '巴黎聖母院、夏特大教堂' },
+        { c: '羅馬式藝術', t: '厚重石牆與宗教壁畫', w: '比薩斜塔' }
+      ]
     },
     en: {
-      name: 'Song', desc: 'Era of exquisite refinement. Literati culture rises; Song porcelain pursues minimalist aesthetics.',
-      cn: { emps: [{y: '960', t: 'Emperor Taizu'}, {y: '1100-1126', t: 'Emperor Huizong'}], evts: [{y: '1069', t: 'Wang Anshi Reforms'}, {y: '1127', t: 'Jingkang Incident'}] },
-      jp: { desc: '"Kokufu" culture thrives. Genpei War leads to the rise of the Samurai and Kamakura Shogunate.', emps: [{y: '1192', t: 'Minamoto no Yoritomo'}], evts: [{y: 'Early 11th C.', t: 'Tale of Genji written'}, {y: '1180-1185', t: 'Genpei War'}] },
-      wl: { desc: 'The Crusades foster East-West trade. The first European universities are established.', emps: [{y: '1189-1199', t: 'Richard the Lionheart'}, {y: '1174-1193', t: 'Saladin'}], evts: [{y: '1096', t: 'First Crusade'}, {y: '1088', t: 'University of Bologna founded'}] },
-      art: { desc: 'Literati painting and minimalist porcelain reached unmatched philosophical and aesthetic heights.', items: [{ c: 'Song Porcelain', t: 'Minimalist aesthetics', w: 'Ru Ware Basin' }, { c: 'Landscape & Genre', t: 'Philosophical and realistic', w: 'Along the River During Qingming' }] }
+      name: 'Song', desc: 'Rise of Chinese literati. Japan sees Samurai take power. Europe awakens via the Crusades.',
+      sync: [
+        { y: 'Late 10th C.', cn: 'Song dynasty founded (960), favoring civil rule', jp: 'Mid-Heian period, "Kokufu" culture thrives', wl: 'Holy Roman Empire founded (962)' },
+        { y: 'Late 11th C.', cn: 'Wang Anshi Reforms', jp: 'Insei (Cloistered rule) begins', wl: 'First Crusade begins (1096)' },
+        { y: 'Early 12th C.', cn: 'Jingkang Incident (1127); Southern Song retreats', jp: 'Taira clan rises, leading to Genpei War', wl: 'European universities emerge (Bologna, Paris)' },
+        { y: 'Late 12th C.', cn: 'Neo-Confucianism peaks (Zhu Xi)', jp: 'Kamakura shogunate established (1192) by Samurai', wl: 'Third Crusade (Richard the Lionheart vs Saladin)' }
+      ],
+      art_cn: [{ c: 'Five Great Kilns', t: 'Minimalist, pure glazes', w: 'Ru Ware Basin' }, { c: 'Literati Landscape', t: 'Philosophical negative space', w: 'Fan Kuan\'s Travelers' }, { c: 'Genre Painting', t: 'Urban life realism', w: 'Along the River During Qingming' }],
+      art_jp: [{ c: 'Yamato-e & Emaki', t: 'Native aesthetics & narrative', w: 'Tale of Genji Scroll' }, { c: 'Kamakura Sculpture', t: 'Samurai realism', w: 'Unkei\'s Guardian Kings' }],
+      art_wl: [{ c: 'Gothic Architecture', t: 'Verticality and stained glass', w: 'Notre-Dame de Paris' }, { c: 'Romanesque', t: 'Thick walls, religious art', w: 'Leaning Tower of Pisa' }]
     },
     ja: {
-      name: '宋', desc: '経済・文化が最も洗練された時代。文人が台頭し、山水画の意境を確立。宋磁は極限の美を追求。',
-      cn: { emps: [{y: '960', t: '趙匡胤（北宋建国）'}, {y: '1100-1126', t: '徽宗（芸術皇帝）'}], evts: [{y: '1069', t: '王安石の変法'}, {y: '1127', t: '靖康の変'}] },
-      jp: { desc: '国風文化が成熟。源平合戦を経て鎌倉幕府が成立し、武士が実権を握る。', emps: [{y: '1073-1129', t: '白河法皇'}, {y: '1192-1199', t: '源頼朝'}], evts: [{y: '11世紀初', t: '紫式部『源氏物語』'}, {y: '1180-1185', t: '源平合戦'}] },
-      wl: { desc: '欧州で十字軍の遠征が始まり東西交易が活発化。パリやボローニャなど最古の大学が設立。', emps: [{y: '1189-1199', t: 'リチャード1世'}, {y: '1174-1193', t: 'サラディン'}], evts: [{y: '1096', t: '第1回十字軍'}, {y: '1088', t: 'ボローニャ大学創立'}] },
-      art: { desc: '文人画の隆盛と、中国陶磁器における極限のシンプルさの追求。', items: [{ c: '五大名窯', t: '汝、官、哥、鈞、定', w: '汝窯天青釉水仙盆' }, { c: '山水画と風俗画', t: '哲学的意境と写実', w: '『清明上河図』' }] }
+      name: '宋', desc: '文人が台頭し美学が極致へ。日本は武士の世へ。欧州は十字軍を通じて文化復興の契機を掴む。',
+      sync: [
+        { y: '10世紀末', cn: '趙匡胤が北宋を建国 (960年)。文治主義', jp: '平安時代中期。国風文化と藤原氏の摂関政治', wl: '神聖ローマ帝国成立 (962年)' },
+        { y: '11世紀末', cn: '王安石の変法', jp: '白河法皇が「院政」を開始', wl: '第1回十字軍の遠征 (1096年)' },
+        { y: '12世紀初', cn: '靖康の変 (1127年)。北宋滅亡、南宋へ', jp: '平氏政権の台頭から源平合戦へ', wl: '欧州で大学が誕生（ボローニャ、パリ）' },
+        { y: '12世紀末', cn: '朱子学（宋学）の完成', jp: '源頼朝が鎌倉幕府を開く (1192年)。武士階級の掌握', wl: '第3回十字軍（リチャード1世とサラディン）' }
+      ],
+      art_cn: [{ c: '五大名窯', t: '極限まで研ぎ澄まされた釉色', w: '汝窯天青釉水仙盆' }, { c: '文人山水画', t: '哲学的意境と余白の美', w: '范寛『谿山行旅図』' }, { c: '風俗画', t: '都市の繁栄を描写', w: '張択端『清明上河図』' }],
+      art_jp: [{ c: '大和絵と絵巻物', t: '日本固有の美意識と物語', w: '『源氏物語絵巻』' }, { c: '武士文化と仏像', t: '鎌倉期の力強い写実', w: '運慶・快慶の金剛力士像' }],
+      art_wl: [{ c: 'ゴシック建築', t: '天を突く尖塔とステンドグラス', w: 'ノートルダム大聖堂' }, { c: 'ロマネスク美術', t: '重厚な石壁と宗教画', w: 'ピサの斜塔' }]
     }
   },
   {
     id: 'yuan', year: '1271 - 1368 AD',
     zh: {
-      name: '元', desc: '蒙古帝國打通歐亞大陸，促進全球貿易。引入中東鈷料誕生「青花瓷」，徹底改變世界陶瓷史。',
-      cn: {
-        emps: [{y: '1271-1294', t: '元世祖忽必烈 (建國)'}],
-        evts: [{y: '1279', t: '崖山海戰 (南宋滅亡)'}, {y: '1275', t: '馬可波羅抵華 (存疑)'}]
-      },
-      jp: {
-        desc: '【鎌倉末期～南北朝】成功抵禦元軍兩次入侵（神風傳說）。隨後鎌倉幕府滅亡，進入動亂期。',
-        emps: [{y: '1268-1284', t: '北條時宗 (幕府執權)'}, {y: '1318-1339', t: '後醍醐天皇'}],
-        evts: [{y: '1274/1281', t: '元寇入侵 (文永/弘安之役)'}, {y: '1333', t: '鎌倉幕府滅亡'}]
-      },
-      wl: {
-        desc: '【蒙古和平與黑死病】蒙古帝國橫掃歐亞；但在14世紀中葉，黑死病席捲歐洲造成人口銳減。',
-        emps: [{y: '1236-1255', t: '拔都 (金帳汗國)'}, {y: '1265-1321', t: '但丁 (文藝復興先驅)'}],
-        evts: [{y: '1347-1351', t: '黑死病席捲歐洲'}, {y: '1337', t: '英法百年戰爭爆發'}]
-      },
-      art: {
-        desc: '異文化交融帶來陶瓷工藝大爆發，同時漢族文人遁入山林，將水墨畫推向新高度。',
-        items: [
-          { c: '青花瓷', t: '鈷料與白瓷的完美對比', w: '元青花蕭何月下追韓信梅瓶' },
-          { c: '元四家文人畫', t: '強調筆墨神韻', w: '黃公望《富春山居圖》、趙孟頫' }
-        ]
-      }
+      name: '元', desc: '蒙古帝國打通歐亞大陸，異文化交融誕生青花瓷。日本經歷神風傳說；歐洲則面臨黑死病浩劫。',
+      sync: [
+        { y: '1270年代', cn: '忽必烈建元，崖山海戰滅南宋 (1279)', jp: '兩度遭元軍入侵 (文永/弘安之役)，神風傳說', wl: '馬可波羅抵達亞洲，激發西方對東方的想像' },
+        { y: '14世紀初', cn: '廢除科舉後短暫恢復，漢族文人遁入山林', jp: '後醍醐天皇倒幕，鎌倉幕府滅亡 (1333)', wl: '但丁創作《神曲》，成為文藝復興的重要先驅' },
+        { y: '14世紀中', cn: '紅巾軍起義，元朝統治崩潰', jp: '進入南北朝分裂動亂時期', wl: '黑死病席捲歐洲 (1347-1351)，人口銳減；英法百年戰爭' }
+      ],
+      art_cn: [
+        { c: '青花瓷', t: '中東鈷料與中國白瓷的完美結合', w: '元青花蕭何月下追韓信梅瓶' },
+        { c: '元末四大家', t: '強調筆墨神韻與個人情感', w: '黃公望《富春山居圖》、倪瓚' },
+        { c: '元曲與戲曲', t: '世俗文學的巔峰', w: '關漢卿《竇娥冤》' }
+      ],
+      art_jp: [
+        { c: '禪宗美術', t: '受南宋影響的頂相與水墨', w: '禪僧肖像畫 (頂相)' },
+        { c: '刀劍工藝', t: '實戰需求帶動鍛造技術', w: '相州傳 (正宗)' }
+      ],
+      art_wl: [
+        { c: '文藝復興黎明', t: '突破中世紀僵硬，注入人性情感', w: '喬托 (Giotto) 的濕壁畫' },
+        { c: '伊斯蘭手抄本', t: '波斯細密畫的發展', w: '《列王紀》插圖' }
+      ]
     },
     en: {
-      name: 'Yuan', desc: 'Mongol Empire connects Eurasia. Middle Eastern cobalt introduces "Blue and White" porcelain.',
-      cn: { emps: [{y: '1271-1294', t: 'Kublai Khan'}], evts: [{y: '1279', t: 'Battle of Yamen (Song falls)'}, {y: '1275', t: 'Marco Polo arrives'}] },
-      jp: { desc: 'Successfully defended against Mongol invasions. Kamakura shogunate falls, leading to civil war.', emps: [{y: '1268-1284', t: 'Hojo Tokimune'}, {y: '1318-1339', t: 'Emperor Go-Daigo'}], evts: [{y: '1274/1281', t: 'Mongol Invasions'}, {y: '1333', t: 'Kamakura shogunate falls'}] },
-      wl: { desc: 'Mongol Peace (Pax Mongolica) across Eurasia. The Black Death ravages Europe in the mid-14th century.', emps: [{y: '1236-1255', t: 'Batu Khan'}, {y: '1265-1321', t: 'Dante Alighieri'}], evts: [{y: '1347-1351', t: 'Black Death in Europe'}] },
-      art: { desc: 'Cultural exchange revolutionized ceramics, while literati painters reached new heights in ink wash.', items: [{ c: 'Blue & White Porcelain', t: 'Global export sensation', w: 'Yuan Blue & White Vases' }, { c: 'Literati Painting', t: 'Four Masters of the Yuan', w: 'Dwelling in the Fuchun Mountains' }] }
+      name: 'Yuan', desc: 'Mongol Empire connects Eurasia, birthing Blue & White porcelain. Japan repels invasions; Europe faces the Black Death.',
+      sync: [
+        { y: '1270s', cn: 'Kublai Khan founds Yuan; Song falls (1279)', jp: 'Mongol invasions repelled (Kamikaze)', wl: 'Marco Polo travels to Asia' },
+        { y: 'Early 14th C.', cn: 'Han literati withdraw from court to nature', jp: 'Kamakura shogunate falls (1333)', wl: 'Dante writes the Divine Comedy' },
+        { y: 'Mid 14th C.', cn: 'Red Turban Rebellions end Yuan rule', jp: 'Nanboku-cho (Northern/Southern Court) period', wl: 'Black Death ravages Europe (1347-1351); Hundred Years\' War' }
+      ],
+      art_cn: [{ c: 'Blue & White Porcelain', t: 'Cobalt meets white clay', w: 'Yuan Meiping Vases' }, { c: 'Four Masters of Yuan', t: 'Expressive ink wash', w: 'Dwelling in the Fuchun Mountains' }, { c: 'Yuan Drama', t: 'Peak of secular theater', w: 'Snow in Midsummer' }],
+      art_jp: [{ c: 'Zen Art', t: 'Influence from Southern Song', w: 'Zen Portraiture (Chinzo)' }, { c: 'Swordsmithing', t: 'Battle-driven craft', w: 'Masamune swords' }],
+      art_wl: [{ c: 'Proto-Renaissance', t: 'Emotion and depth', w: 'Giotto\'s Frescoes' }, { c: 'Islamic Manuscripts', t: 'Persian miniatures', w: 'Shahnameh illustrations' }]
     },
     ja: {
-      name: '元', desc: 'モンゴル帝国がユーラシアを統一。中東のコバルト顔料により「青花磁器」が誕生。',
-      cn: { emps: [{y: '1271-1294', t: 'フビライ・ハン'}], evts: [{y: '1279', t: '崖山の戦い'}, {y: '1275', t: 'マルコ・ポーロ来訪'}] },
-      jp: { desc: '元寇（神風）を防ぐ。その後鎌倉幕府が滅亡し、建武の新政から南北朝の動乱へ。', emps: [{y: '1268-1284', t: '北条時宗'}, {y: '1318-1339', t: '後醍醐天皇'}], evts: [{y: '1274/1281', t: '元寇（文永・弘安の役）'}, {y: '1333', t: '鎌倉幕府滅亡'}] },
-      wl: { desc: '「モンゴルの平和」。14世紀半ば、欧州でペスト（黒死病）が大流行し人口激減。', emps: [{y: '1236-1255', t: 'バトゥ（キプチャク・ハン国）'}, {y: '1265-1321', t: 'ダンテ'}], evts: [{y: '1347-1351', t: '黒死病の猛威'}] },
-      art: { desc: '異文化交流による陶磁器の革新と、漢民族文人による水墨画の深化。', items: [{ c: '青花磁器', t: '白磁とコバルトの対比', w: '元青花梅瓶' }, { c: '文人画', t: '元末四大家', w: '黄公望『富春山居図』' }] }
+      name: '元', desc: 'モンゴル帝国がユーラシアを繋ぎ、青花磁器が誕生。日本は元寇を防ぎ、欧州は黒死病の猛威に直面。',
+      sync: [
+        { y: '1270年代', cn: 'フビライが元を建国し南宋を滅ぼす (1279)', jp: '二度の元寇（文永・弘安の役）と神風', wl: 'マルコ・ポーロがアジアへ。東方への関心高まる' },
+        { y: '14世紀初', cn: '漢民族文人が朝廷を離れ山林に隠遁', jp: '後醍醐天皇による倒幕、鎌倉幕府滅亡 (1333)', wl: 'ダンテ『神曲』。ルネサンスの先駆け' },
+        { y: '14世紀中', cn: '紅巾の乱により元の支配が崩壊', jp: '建武の新政から南北朝の動乱時代へ', wl: '黒死病（ペスト）が欧州を席巻。英仏百年戦争' }
+      ],
+      art_cn: [{ c: '青花磁器', t: '中東のコバルトと白磁の融合', w: '元青花梅瓶' }, { c: '元末四大家', t: '筆墨の精神性と隠遁の情', w: '黄公望『富春山居図』' }, { c: '元曲', t: '庶民演劇の頂点', w: '関漢卿『竇娥冤』' }],
+      art_jp: [{ c: '禅宗美術', t: '南宋画の影響と頂相', w: '禅僧の肖像画' }, { c: '刀剣工芸', t: '実戦需要による鍛造の進化', w: '相州伝（正宗）' }],
+      art_wl: [{ c: 'ルネサンスの黎明', t: '中世からの脱却と人間感情', w: 'ジョットのフレスコ画' }, { c: 'イスラム写本', t: 'ペルシャ細密画', w: '『シャー・ナーメ』挿絵' }]
     }
   },
   {
     id: 'ming', year: '1368 - 1644 AD',
     zh: {
-      name: '明', desc: '恢復漢族傳統，展現強大航海實力，建成紫禁城。晚期資本主義萌芽，王陽明心學影響深遠。',
-      cn: {
-        emps: [{y: '1368-1398', t: '明太祖朱元璋'}, {y: '1402-1424', t: '明成祖朱棣 (遷都北京)'}, {y: '1572-1620', t: '明神宗 (萬曆怠政)'}, {y: '1627-1644', t: '明思宗 (崇禎亡國)'}],
-        evts: [{y: '1405-1433', t: '鄭和七下西洋'}, {y: '1420', t: '紫禁城落成'}, {y: '1449', t: '土木堡之變'}, {y: '1581', t: '張居正一條鞭法'}]
-      },
-      jp: {
-        desc: '【室町～安土桃山】經歷應仁之亂與戰國時代動盪，最終由織田信長與豐臣秀吉推動統一。',
-        emps: [{y: '1368-1408', t: '足利義滿 (金閣寺)'}, {y: '1534-1582', t: '織田信長'}, {y: '1537-1598', t: '豐臣秀吉'}],
-        evts: [{y: '1467-1477', t: '應仁之亂 (戰國時代始)'}, {y: '1590', t: '豐臣秀吉統一天下'}]
-      },
-      wl: {
-        desc: '【文藝復興與大航海】義大利文藝復興開花結果；哥倫布抵達美洲，開啟全球化與殖民擴張。',
-        emps: [{y: '1452-1519', t: '達文西'}, {y: '1558-1603', t: '伊莉莎白一世 (英格蘭)'}],
-        evts: [{y: '1492', t: '哥倫布發現美洲'}, {y: '1517', t: '馬丁路德宗教改革'}]
-      },
-      art: {
-        desc: '工藝美術極度發達，民間文化(小說、版畫)興起。',
-        items: [
-          { c: '明式家具', t: '榫卯結構與簡潔線條', w: '黃花梨圈椅、紫檀木案' },
-          { c: '御窯瓷器與銅器', t: '景德鎮官窯與宣德爐', w: '成化鬥彩雞缸杯、宣德爐' },
-          { c: '吳門畫派', t: '江南文人雅趣', w: '唐寅、文徵明、仇英' }
-        ]
-      }
+      name: '明', desc: '明朝恢復漢制、建紫禁城。日本進入戰國大名爭霸；歐洲迎來文藝復興全盛與大航海時代的全球化。',
+      sync: [
+        { y: '14世紀末', cn: '朱元璋建立明朝 (1368年)，廢除丞相制', jp: '足利義滿統一南北朝，室町幕府鼎盛', wl: '歐洲持續進行英法百年戰爭' },
+        { y: '15世紀初', cn: '鄭和七下西洋 (1405起)；紫禁城落成 (1420年)', jp: '建立金閣寺；與明朝展開「勘合貿易」', wl: '義大利文藝復興進入早期爆發階段' },
+        { y: '15世紀末', cn: '明孝宗「弘治中興」，江南經濟繁榮', jp: '應仁之亂 (1467年) 爆發，進入戰國時代', wl: '哥倫布發現美洲 (1492年)；達文西繪製《最後的晚餐》' },
+        { y: '16世紀末', cn: '萬曆朝鮮之役 (1592年) 耗損國力', jp: '豐臣秀吉統一天下，隨後出兵朝鮮', wl: '英國擊敗西班牙無敵艦隊 (1588年)' }
+      ],
+      art_cn: [
+        { c: '明式家具', t: '榫卯結構與極簡線條的文人品味', w: '黃花梨圈椅' },
+        { c: '御窯瓷器與銅器', t: '景德鎮官窯與銅器巔峰', w: '成化鬥彩雞缸杯、宣德爐' },
+        { c: '吳門畫派', t: '江南文人的雅趣與世俗', w: '唐寅 (唐伯虎)、文徵明、仇英' }
+      ],
+      art_jp: [
+        { c: '水墨與狩野派', t: '日本水墨的頂峰與障壁畫', w: '雪舟《秋冬山水圖》、狩野永德' },
+        { c: '茶道美學', t: '「侘寂」精神的確立', w: '千利休、樂茶碗' }
+      ],
+      art_wl: [
+        { c: '文藝復興藝術', t: '人文主義、透視法與解剖學', w: '達文西《蒙娜麗莎》、米開朗基羅《大衛像》' },
+        { c: '北方文藝復興', t: '油畫技法與細膩寫實', w: '揚·范艾克、杜勒' }
+      ]
     },
     en: {
-      name: 'Ming', desc: 'Restoration of Han rule. Famous for maritime voyages, Forbidden City, and Wang Yangming philosophy.',
-      cn: { emps: [{y: '1368-1398', t: 'Emperor Hongwu'}, {y: '1402-1424', t: 'Emperor Yongle'}, {y: '1627-1644', t: 'Emperor Chongzhen'}], evts: [{y: '1405-1433', t: 'Zheng He\'s voyages'}, {y: '1420', t: 'Forbidden City completed'}, {y: '1449', t: 'Tumu Crisis'}] },
-      jp: { desc: 'Onin War sparks the Sengoku period, leading to unification by Nobunaga and Hideyoshi.', emps: [{y: '1368-1408', t: 'Ashikaga Yoshimitsu'}, {y: '1534-1582', t: 'Oda Nobunaga'}], evts: [{y: '1467-1477', t: 'Onin War'}, {y: '1590', t: 'Hideyoshi unifies Japan'}] },
-      wl: { desc: 'Italian Renaissance flourishes. Columbus reaches the Americas, sparking global colonization.', emps: [{y: '1452-1519', t: 'Leonardo da Vinci'}, {y: '1558-1603', t: 'Elizabeth I'}], evts: [{y: '1492', t: 'Columbus reaches Americas'}, {y: '1517', t: 'Protestant Reformation'}] },
-      art: { desc: 'Crafts and popular culture thrived.', items: [{ c: 'Ming Furniture', t: 'Minimalist joinery', w: 'Huanghuali Chairs' }, { c: 'Imperial Porcelain', t: 'Jingdezhen kilns', w: 'Chenghua Chicken Cup' }, { c: 'Wu School Painting', t: 'Jiangnan literati', w: 'Works of Tang Yin' }] }
+      name: 'Ming', desc: 'Ming restores Han rule. Japan endures the Sengoku period. Europe experiences the High Renaissance and Age of Discovery.',
+      sync: [
+        { y: 'Late 14th C.', cn: 'Hongwu founds Ming (1368); abolishes chancellery', jp: 'Ashikaga Yoshimitsu unifies Northern/Southern courts', wl: 'Hundred Years\' War continues in Europe' },
+        { y: 'Early 15th C.', cn: 'Zheng He\'s voyages (1405); Forbidden City built (1420)', jp: 'Kinkaku-ji built; Kangou trade with Ming', wl: 'Early Renaissance in Italy begins' },
+        { y: 'Late 15th C.', cn: 'Jiangnan economy prospers under Hongzhi', jp: 'Onin War (1467) starts the Sengoku period', wl: 'Columbus reaches Americas (1492); Da Vinci paints The Last Supper' },
+        { y: 'Late 16th C.', cn: 'Imjin War in Korea drains Ming resources', jp: 'Hideyoshi unifies Japan, invades Korea', wl: 'England defeats the Spanish Armada (1588)' }
+      ],
+      art_cn: [{ c: 'Ming Furniture', t: 'Minimalist joinery', w: 'Huanghuali Chairs' }, { c: 'Imperial Kilns & Bronzes', t: 'Jingdezhen & censers', w: 'Chenghua Chicken Cup, Xuande Censer' }, { c: 'Wu School', t: 'Jiangnan literati', w: 'Tang Yin, Wen Zhengming' }],
+      art_jp: [{ c: 'Ink & Kano School', t: 'Peak ink wash & screens', w: 'Sesshu, Kano Eitoku' }, { c: 'Tea Ceremony', t: 'Wabi-sabi aesthetics', w: 'Sen no Rikyu, Raku ware' }],
+      art_wl: [{ c: 'High Renaissance', t: 'Humanism & perspective', w: 'Mona Lisa, Michelangelo\'s David' }, { c: 'Northern Renaissance', t: 'Oil painting mastery', w: 'Jan van Eyck, Dürer' }]
     },
     ja: {
-      name: '明', desc: '漢民族の伝統回復。鄭和の航海、紫禁城の建設。陽明学が後世に影響を与えた。',
-      cn: { emps: [{y: '1368-1398', t: '洪武帝（朱元璋）'}, {y: '1402-1424', t: '永楽帝'}, {y: '1627-1644', t: '崇禎帝（明滅亡）'}], evts: [{y: '1405-1433', t: '鄭和の遠征'}, {y: '1420', t: '紫禁城完成'}, {y: '1449', t: '土木の変'}] },
-      jp: { desc: '応仁の乱から戦国時代を経て、信長・秀吉による天下統一へ。', emps: [{y: '1368-1408', t: '足利義満'}, {y: '1534-1582', t: '織田信長'}, {y: '1537-1598', t: '豊臣秀吉'}], evts: [{y: '1467-1477', t: '応仁の乱'}, {y: '1590', t: '秀吉の天下統一'}] },
-      wl: { desc: 'ルネサンスが開花。コロンブスのアメリカ到達により大航海時代・グローバル化が始まる。', emps: [{y: '1452-1519', t: 'ダ・ヴィンチ'}, {y: '1558-1603', t: 'エリザベス1世'}], evts: [{y: '1492', t: 'アメリカ大陸到達'}, {y: '1517', t: '宗教改革'}] },
-      art: { desc: '工芸美術が極度に進達し、明式家具や官窯磁器が発展。', items: [{ c: '明式家具', t: '簡潔な線とホゾ組み', w: '黄花梨の椅子' }, { c: '御窯磁器', t: '景徳鎮の官窯', w: '成化闘彩鶏缸杯' }, { c: '呉派の絵画', t: '江南の文人画', w: '唐寅、文徴明' }] }
+      name: '明', desc: '明は漢民族の伝統を回復。日本は戦国時代へ。欧州はルネサンスの最盛期と大航海時代を迎える。',
+      sync: [
+        { y: '14世紀末', cn: '朱元璋が明を建国 (1368年)。丞相制を廃止', jp: '足利義満が南北朝を統一。室町幕府の全盛', wl: '欧州で英仏百年戦争が続く' },
+        { y: '15世紀初', cn: '鄭和の遠征 (1405年～)。紫禁城完成 (1420年)', jp: '金閣寺建立。明との間で勘合貿易', wl: 'イタリア・ルネサンスの初期段階' },
+        { y: '15世紀末', cn: '弘治の中興。江南の経済が繁栄', jp: '応仁の乱 (1467年)。戦国時代へ突入', wl: 'コロンブスのアメリカ到達 (1492年)' },
+        { y: '16世紀末', cn: '朝鮮出兵（文禄・慶長の役）による国力疲弊', jp: '豊臣秀吉が天下統一し、朝鮮へ出兵', wl: 'イギリスがスペイン無敵艦隊を撃破 (1588年)' }
+      ],
+      art_cn: [{ c: '明式家具', t: 'ホゾ組みと洗練された線', w: '黄花梨の椅子' }, { c: '御窯磁器と銅器', t: '景徳鎮と宣徳炉', w: '成化闘彩鶏缸杯' }, { c: '呉派の絵画', t: '江南文人の雅趣', w: '唐寅、文徴明' }],
+      art_jp: [{ c: '水墨画と狩野派', t: '日本水墨の頂点と障壁画', w: '雪舟『秋冬山水図』、狩野永徳' }, { c: '茶の湯', t: '「侘び寂び」の確立', w: '千利休、楽茶碗' }],
+      art_wl: [{ c: '盛期ルネサンス', t: '人文主義と透視図法', w: '『モナ・リザ』、ミケランジェロ『ダビデ像』' }, { c: '北方ルネサンス', t: '油彩技法と写実', w: 'ヤン・ファン・エイク、デューラー' }]
     }
   },
   {
     id: 'qing', year: '1644 - 1912 AD',
     zh: {
-      name: '清', desc: '中國最後的帝制王朝。康雍乾時期國力鼎盛。傳教士帶來透視法促成中西藝術交融。',
-      cn: {
-        emps: [{y: '1661-1722', t: '康熙帝 (平三藩收台灣)'}, {y: '1722-1735', t: '雍正帝 (集權巔峰)'}, {y: '1736-1795', t: '乾隆帝 (極盛轉衰)'}, {y: '1875-1908', t: '光緒帝 (慈禧掌權)'}],
-        evts: [{y: '1644', t: '清軍入關'}, {y: '1773', t: '編纂《四庫全書》'}, {y: '1840', t: '鴉片戰爭爆發'}, {y: '1894', t: '甲午戰爭'}, {y: '1911', t: '辛亥革命'}]
-      },
-      jp: {
-        desc: '【江戶～明治維新】德川幕府實行鎖國。1868年面對西方叩關，展開「明治維新」迅速全盤西化。',
-        emps: [{y: '1543-1616', t: '德川家康 (開創幕府)'}, {y: '1852-1912', t: '明治天皇'}],
-        evts: [{y: '1639', t: '全面鎖國令'}, {y: '1867', t: '大政奉還'}, {y: '1868', t: '明治維新開始'}]
-      },
-      wl: {
-        desc: '【科學與工業革命】英國爆發工業革命；美國獨立與法國大革命帶來民主思潮。西方確立全球霸權。',
-        emps: [{y: '1643-1715', t: '路易十四 (太陽王)'}, {y: '1837-1901', t: '維多利亞女王 (日不落國)'}],
-        evts: [{y: '1760年代', t: '英國工業革命'}, {y: '1776', t: '美國獨立'}, {y: '1789', t: '法國大革命'}]
-      },
-      art: {
-        desc: '宮廷藝術極盡繁縟奢華，中西合璧畫風誕生。',
-        items: [
-          { c: '中西合璧宮廷畫', t: '融合西方透視與中國線條', w: '郎世寧《百駿圖》' },
-          { c: '琺瑯彩與粉彩瓷', t: '清代官窯炫技之作', w: '乾隆 各色釉彩大瓶 (瓷母)' },
-          { c: '清初四僧', t: '反清復明遺民的情感抒發', w: '石濤、八大山人' }
-        ]
-      }
+      name: '清', desc: '中國最後的帝制王朝，極盛轉衰。日本經歷長期鎖國後維新；西方藉由科學與工業革命確立全球霸權。',
+      sync: [
+        { y: '17世紀中', cn: '清軍入關 (1644年)，確立對全國統治', jp: '德川幕府頒布全面鎖國令 (1639年)', wl: '英國爆發清教徒革命；牛頓發表萬有引力' },
+        { y: '18世紀', cn: '康雍乾盛世。編纂《四庫全書》', jp: '江戶時代太平盛世，町人文化與浮世繪興起', wl: '英國展開工業革命；美國獨立(1776)；法國大革命(1789)' },
+        { y: '19世紀中', cn: '第一次鴉片戰爭 (1840年)，中國門戶洞開', jp: '美國黑船叩關 (1853年)，鎖國體制崩潰', wl: '歐洲第二次工業革命；攝影術發明' },
+        { y: '19世紀末', cn: '甲午戰爭戰敗，維新運動失敗', jp: '大政奉還 (1867年)，開啟「明治維新」迅速西化', wl: '印象派藝術盛行；西方列強瓜分世界' }
+      ],
+      art_cn: [
+        { c: '中西合璧宮廷畫', t: '西洋透視與中國線條結合', w: '郎世寧《百駿圖》' },
+        { c: '琺瑯彩與粉彩瓷', t: '清代官窯無所不包的炫技之作', w: '乾隆 各色釉彩大瓶 (瓷母)' },
+        { c: '清初四僧', t: '遺民畫家對國破家亡的情感抒發', w: '石濤、八大山人' }
+      ],
+      art_jp: [
+        { c: '浮世繪版畫', t: '影響歐洲印象派的庶民藝術', w: '葛飾北齋《神奈川沖浪裏》、歌川廣重' },
+        { c: '琳派裝飾藝術', t: '大膽構圖與金箔背景', w: '尾形光琳《燕子花圖屏風》' }
+      ],
+      art_wl: [
+        { c: '巴洛克與洛可可', t: '戲劇性光影與宮廷奢華', w: '林布蘭、凡爾賽宮' },
+        { c: '印象派與後印象派', t: '捕捉光影與色彩的瞬間', w: '莫內、梵谷《星夜》' }
+      ]
     },
     en: {
-      name: 'Qing', desc: 'The final imperial dynasty. High Qing era saw peak prosperity. Western missionaries influenced court art.',
-      cn: { emps: [{y: '1661-1722', t: 'Emperor Kangxi'}, {y: '1736-1795', t: 'Emperor Qianlong'}, {y: '1875-1908', t: 'Empress Cixi'}], evts: [{y: '1644', t: 'Qing enters Beijing'}, {y: '1840', t: 'First Opium War'}, {y: '1911', t: 'Xinhai Revolution'}] },
-      jp: { desc: 'Tokugawa isolation policy (Sakoku). 1868 Meiji Restoration rapidly modernizes Japan.', emps: [{y: '1543-1616', t: 'Tokugawa Ieyasu'}, {y: '1852-1912', t: 'Emperor Meiji'}], evts: [{y: '1639', t: 'Sakoku (Isolation)'}, {y: '1868', t: 'Meiji Restoration'}] },
-      wl: { desc: 'British Industrial Revolution; American/French Revolutions establish Western global hegemony.', emps: [{y: '1643-1715', t: 'Louis XIV'}, {y: '1837-1901', t: 'Queen Victoria'}], evts: [{y: '1760s', t: 'Industrial Revolution'}, {y: '1789', t: 'French Revolution'}] },
-      art: { desc: 'Highly ornate court art and the fusion of East-West styles.', items: [{ c: 'East-West Fusion', t: 'Western perspective in court', w: 'Castiglione\'s 100 Horses' }, { c: 'Enamel & Famille Rose', t: 'Peak porcelain techniques', w: 'Qianlong\'s "Mother of Porcelain"' }, { c: 'Individualist Painters', t: 'Ming loyalists', w: 'Bada Shanren' }] }
+      name: 'Qing', desc: 'The final imperial dynasty. Japan ends isolation via Meiji Restoration. The West dominates through Industrial Revolutions.',
+      sync: [
+        { y: 'Mid 17th C.', cn: 'Qing enters Beijing (1644)', jp: 'Tokugawa implements Sakoku (Isolation) in 1639', wl: 'English Civil War; Newton\'s gravity' },
+        { y: '18th C.', cn: 'High Qing (Kangxi-Qianlong). Siku Quanshu compiled', jp: 'Edo period peace; Chonin (townsman) culture thrives', wl: 'Industrial Revolution begins; US Independence; French Rev.' },
+        { y: 'Mid 19th C.', cn: 'First Opium War (1840)', jp: 'Perry\'s Black Ships (1853) end isolation', wl: 'Second Industrial Revolution; Invention of photography' },
+        { y: 'Late 19th C.', cn: 'Defeat in Sino-Japanese War; Failed reforms', jp: 'Meiji Restoration (1868) rapid modernization', wl: 'Impressionism flourishes; Imperialism peaks' }
+      ],
+      art_cn: [{ c: 'East-West Court Art', t: 'Perspective meets brushwork', w: 'Castiglione\'s 100 Horses' }, { c: 'Enamel & Famille Rose', t: 'Peak porcelain techniques', w: 'Qianlong\'s "Mother of Porcelain"' }, { c: 'Individualist Painters', t: 'Ming loyalist expression', w: 'Bada Shanren, Shitao' }],
+      art_jp: [{ c: 'Ukiyo-e Prints', t: 'Pop culture influencing Europe', w: 'Hokusai\'s Great Wave' }, { c: 'Rinpa School', t: 'Bold design and gold leaf', w: 'Ogata Korin\'s Irises' }],
+      art_wl: [{ c: 'Baroque & Rococo', t: 'Dramatic light and luxury', w: 'Rembrandt, Palace of Versailles' }, { c: 'Impressionism', t: 'Capturing light and moment', w: 'Monet, Van Gogh\'s Starry Night' }]
     },
     ja: {
-      name: '清', desc: '最後の王朝。康熙・雍正・乾隆で国力は頂点に。宣教師が西洋画法をもたらし和洋折衷が生まれた。',
-      cn: { emps: [{y: '1661-1722', t: '康熙帝'}, {y: '1736-1795', t: '乾隆帝'}, {y: '1875-1908', t: '西太后（実権）'}], evts: [{y: '1644', t: '清軍入関'}, {y: '1840', t: 'アヘン戦争'}, {y: '1911', t: '辛亥革命'}] },
-      jp: { desc: '江戸幕府の鎖国政策。1868年の明治維新により急速に西洋化・近代化。', emps: [{y: '1543-1616', t: '徳川家康'}, {y: '1852-1912', t: '明治天皇'}], evts: [{y: '1639', t: '鎖国令'}, {y: '1867', t: '大政奉還'}, {y: '1868', t: '明治維新'}] },
-      wl: { desc: '英国の産業革命、アメリカ独立やフランス革命。西洋が世界覇権を確立。', emps: [{y: '1643-1715', t: 'ルイ14世'}, {y: '1837-1901', t: 'ヴィクトリア女王'}], evts: [{y: '1760年代', t: '産業革命'}, {y: '1789', t: 'フランス革命'}] },
-      art: { desc: '華麗な宮廷芸術と、和洋折衷の絵画。', items: [{ c: '中西折衷の宮廷画', t: '西洋の透視図法', w: '郎世寧『百駿図』' }, { c: '粉彩・琺瑯彩', t: '陶磁器技巧の極み', w: '各種釉彩大瓶' }, { c: '清初四僧', t: '明の遺臣の情念', w: '八大山人、石涛' }] }
+      name: '清', desc: '中国最後の王朝。日本は長期の鎖国から開国・維新へ。欧米は科学と産業革命で世界覇権を確立。',
+      sync: [
+        { y: '17世紀中', cn: '清軍が入関し全国支配を確立 (1644年)', jp: '徳川幕府が鎖国体制を完成 (1639年)', wl: 'ニュートンの万有引力、清教徒革命' },
+        { y: '18世紀', cn: '康熙・雍正・乾隆の全盛期。『四庫全書』編纂', jp: '江戸の泰平。町人文化と浮世絵の興隆', wl: '英国の産業革命、アメリカ独立、フランス革命' },
+        { y: '19世紀中', cn: 'アヘン戦争 (1840年)。西欧列強の侵食', jp: 'ペリー来航 (1853年)。鎖国体制の崩壊', wl: '第二次産業革命、写真術の発明' },
+        { y: '19世紀末', cn: '日清戦争敗北、変法運動の挫折', jp: '大政奉還 (1867年)から明治維新。急速な近代化', wl: '印象派の流行。西洋列強による世界分割' }
+      ],
+      art_cn: [{ c: '中西折衷の宮廷画', t: '西洋透視図法と中国線描', w: '郎世寧『百駿図』' }, { c: '粉彩と琺瑯彩', t: '清代官窯の技巧の極み', w: '各種釉彩大瓶' }, { c: '清初四僧', t: '明の遺臣の情念', w: '石涛、八大山人' }],
+      art_jp: [{ c: '浮世絵版画', t: '印象派に影響を与えた大衆芸術', w: '葛飾北斎『神奈川沖浪裏』' }, { c: '琳派', t: '大胆な構図と金箔背景', w: '尾形光琳『燕子花図屏風』' }],
+      art_wl: [{ c: 'バロックとロココ', t: '劇的な光と宮廷の豪華さ', w: 'レンブラント、ヴェルサイユ宮殿' }, { c: '印象派と後期印象派', t: '光と瞬間の追求', w: 'モネ、ゴッホ『星月夜』' }]
     }
   }
 ];
@@ -461,8 +529,8 @@ function setLang(l) {
   document.querySelector(`.lb[onclick="setLang('${l}')"]`).classList.add('on');
   
   document.getElementById('ui-sub').textContent = UI[l].sub;
-  document.querySelector('.cb[data-c="jp"]').textContent = UI[l].btnJp;
-  document.querySelector('.cb[data-c="wl"]').textContent = UI[l].btnWl;
+  document.querySelector('.cb[data-c="jp"]').textContent = UI[l].badge.jp + (l==='zh'?'對照':'');
+  document.querySelector('.cb[data-c="wl"]').textContent = UI[l].badge.wl + (l==='zh'?'對照':'');
   
   renderTimeline();
   selectEra(activeEraId);
@@ -500,7 +568,23 @@ function selectEra(id) {
   const d = rawData[lang];
   const u = UI[lang];
 
-  const genMiniTl = (items) => items.map(item => `<div class="mini-event"><div class="m-year">${item.y}</div><div class="m-text">${item.t}</div></div>`).join('');
+  // 1. 生成橫向對照時間軸
+  const genSyncRows = (syncData) => {
+    return syncData.map(row => {
+      let evtsHtml = `<div class="s-evt"><span class="badge cn">${u.badge.cn}</span><div>${row.cn}</div></div>`;
+      if(civs.jp && row.jp) evtsHtml += `<div class="s-evt"><span class="badge jp">${u.badge.jp}</span><div>${row.jp}</div></div>`;
+      if(civs.wl && row.wl) evtsHtml += `<div class="s-evt"><span class="badge wl">${u.badge.wl}</span><div>${row.wl}</div></div>`;
+      
+      return `
+        <div class="sync-row">
+          <div class="sync-year">${row.y}</div>
+          <div class="sync-events">${evtsHtml}</div>
+        </div>
+      `;
+    }).join('');
+  };
+
+  // 2. 生成藝術清單
   const genArtList = (items) => items.map(item => `<div class="art-item"><div class="art-item-cat">${item.c}</div><div class="art-item-text">${item.t}</div><div class="art-item-works">${item.w}</div></div>`).join('');
 
   const dash = document.getElementById('dashboard');
@@ -512,45 +596,34 @@ function selectEra(id) {
         <div class="dash-title">${d.name} <span style="font-size:16px; color:var(--ink-light); font-family:var(--font-sans);">(${rawData.year})</span></div>
         <div class="dash-desc">${d.desc}</div>
       </div>
-      <div class="history-grid">
-        <div class="hist-col col-cn">
-          <div class="col-title">${u.cn}</div>
-          <div style="display:flex; gap:16px;">
-            <div style="flex:1"><div class="mt-title">${u.emp}</div><div class="mini-timeline">${genMiniTl(d.cn.emps)}</div></div>
-            <div style="flex:1"><div class="mt-title">${u.evt}</div><div class="mini-timeline">${genMiniTl(d.cn.evts)}</div></div>
-          </div>
-          <div class="art-section">
-            <div class="art-header">${u.art}</div>
-            <div class="art-desc">${d.art.desc}</div>
-            <div class="art-list">${genArtList(d.art.items)}</div>
-          </div>
+
+      <div class="sync-section-title">${u.tSync}</div>
+      <div class="sync-timeline">
+        ${genSyncRows(d.sync)}
+      </div>
+
+      <div class="sync-section-title">${u.tArt}</div>
+      <div class="art-grid">
+        <div class="art-col cn">
+          <div class="art-col-title">${u.badge.cn}</div>
+          <div class="art-list">${genArtList(d.art_cn)}</div>
         </div>
     `;
 
-    // 日本欄位
     if(civs.jp) {
       html += `
-        <div class="hist-col col-jp">
-          <div class="col-title">${u.jp}</div>
-          <div class="text-block">${d.jp.desc}</div>
-          <div style="display:flex; gap:16px; margin-top:10px;">
-            <div style="flex:1"><div class="mt-title">${u.emp}</div><div class="mini-timeline">${genMiniTl(d.jp.emps)}</div></div>
-            <div style="flex:1"><div class="mt-title">${u.evt}</div><div class="mini-timeline">${genMiniTl(d.jp.evts)}</div></div>
-          </div>
+        <div class="art-col jp">
+          <div class="art-col-title">${u.badge.jp}</div>
+          <div class="art-list">${genArtList(d.art_jp)}</div>
         </div>
       `;
     }
     
-    // 世界欄位
     if(civs.wl) {
       html += `
-        <div class="hist-col col-wl">
-          <div class="col-title">${u.wl}</div>
-          <div class="text-block">${d.wl.desc}</div>
-          <div style="display:flex; gap:16px; margin-top:10px;">
-            <div style="flex:1"><div class="mt-title">${u.emp}</div><div class="mini-timeline">${genMiniTl(d.wl.emps)}</div></div>
-            <div style="flex:1"><div class="mt-title">${u.evt}</div><div class="mini-timeline">${genMiniTl(d.wl.evts)}</div></div>
-          </div>
+        <div class="art-col wl">
+          <div class="art-col-title">${u.badge.wl}</div>
+          <div class="art-list">${genArtList(d.art_wl)}</div>
         </div>
       `;
     }
